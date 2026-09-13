@@ -36,8 +36,8 @@ const servicesByType: Record<string, string[]> = {
     "Engagement",
     "Audience Growth",
     "Content Reach",
+    "Video Views",
   ],
-
   "Video Promotion": [
     "Video Views",
     "Reach",
@@ -48,7 +48,6 @@ const servicesByType: Record<string, string[]> = {
     "Shares",
     "Audience Growth",
   ],
-
   "Music Promotion": [
     "Music Discovery",
     "Music Reach",
@@ -58,7 +57,6 @@ const servicesByType: Record<string, string[]> = {
     "Subscribers",
     "Engagement",
   ],
-
   "Website Promotion": [
     "Website Visits",
     "Landing-Page Traffic",
@@ -66,7 +64,6 @@ const servicesByType: Record<string, string[]> = {
     "Leads / Sign-ups",
     "Sales / Conversions",
   ],
-
   "Product Promotion": [
     "Reach",
     "Brand Awareness",
@@ -75,7 +72,6 @@ const servicesByType: Record<string, string[]> = {
     "Sales / Conversions",
     "Engagement",
   ],
-
   "Business Promotion": [
     "Brand Awareness",
     "Reach",
@@ -84,7 +80,6 @@ const servicesByType: Record<string, string[]> = {
     "Local Promotion",
     "Sales / Conversions",
   ],
-
   "App Promotion": [
     "App Visits",
     "App Installs",
@@ -93,7 +88,6 @@ const servicesByType: Record<string, string[]> = {
     "Brand Awareness",
     "Conversions",
   ],
-
   "Creator Promotion": [
     "Followers",
     "Subscribers",
@@ -130,16 +124,18 @@ export default function CreateCampaignPage() {
   const [budget, setBudget] = useState("");
 
   const services = campaignType
-    ? servicesByType[campaignType] || []
+    ? servicesByType[campaignType] ?? []
     : [];
 
   const isBudgetBased = budgetServices.includes(service);
 
   const canContinue =
-    campaignType &&
-    destination &&
-    service &&
-    (isBudgetBased ? Number(budget) > 0 : Number(quantity) > 0);
+    Boolean(campaignType) &&
+    Boolean(destination) &&
+    Boolean(service) &&
+    (isBudgetBased
+      ? Number(budget) > 0
+      : Number(quantity) > 0);
 
   function continueToReview() {
     if (!canContinue) return;
@@ -165,20 +161,22 @@ export default function CreateCampaignPage() {
   return (
     <main className={styles.page}>
       <div className={styles.container}>
-        <div className={styles.header}>
+        <header className={styles.header}>
           <p className={styles.eyebrow}>PROMVANTA</p>
 
           <h1>Create Campaign</h1>
 
           <p className={styles.subtitle}>
-            Tell us what you want to promote and what you want to achieve.
-            PROMVANTA will calculate the appropriate campaign price.
+            Tell us what you want to promote and what you want
+            to achieve. PROMVANTA will calculate the appropriate
+            campaign price.
           </p>
-        </div>
+        </header>
 
         <section className={styles.card}>
           <div className={styles.step}>
             <span>1</span>
+
             <div>
               <h2>Campaign Type</h2>
               <p>What are you promoting?</p>
@@ -210,9 +208,12 @@ export default function CreateCampaignPage() {
           <section className={styles.card}>
             <div className={styles.step}>
               <span>2</span>
+
               <div>
                 <h2>Platform / Destination</h2>
-                <p>Select where your promotion will happen.</p>
+                <p>
+                  Select where your promotion will happen.
+                </p>
               </div>
             </div>
 
@@ -239,9 +240,13 @@ export default function CreateCampaignPage() {
           <section className={styles.card}>
             <div className={styles.step}>
               <span>3</span>
+
               <div>
                 <h2>Promotion Link</h2>
-                <p>Enter the public link or destination you want to promote.</p>
+                <p>
+                  Enter the public link or destination you want
+                  to promote.
+                </p>
               </div>
             </div>
 
@@ -250,7 +255,9 @@ export default function CreateCampaignPage() {
               type="url"
               placeholder="https://example.com/your-content"
               value={destination}
-              onChange={(e) => setDestination(e.target.value)}
+              onChange={(event) =>
+                setDestination(event.target.value)
+              }
             />
           </section>
         )}
@@ -259,6 +266,7 @@ export default function CreateCampaignPage() {
           <section className={styles.card}>
             <div className={styles.step}>
               <span>4</span>
+
               <div>
                 <h2>Choose Your Goal</h2>
                 <p>Select one specific promotion goal.</p>
@@ -288,6 +296,7 @@ export default function CreateCampaignPage() {
           <section className={styles.card}>
             <div className={styles.step}>
               <span>5</span>
+
               <div>
                 <h2>
                   {isBudgetBased
@@ -315,7 +324,9 @@ export default function CreateCampaignPage() {
                     min="2500"
                     placeholder="2500"
                     value={budget}
-                    onChange={(e) => setBudget(e.target.value)}
+                    onChange={(event) =>
+                      setBudget(event.target.value)
+                    }
                   />
                 </div>
 
@@ -333,12 +344,14 @@ export default function CreateCampaignPage() {
                   min="1"
                   placeholder="Enter quantity"
                   value={quantity}
-                  onChange={(e) => setQuantity(e.target.value)}
+                  onChange={(event) =>
+                    setQuantity(event.target.value)
+                  }
                 />
 
                 <small>
-                  PROMVANTA will calculate the price from the configured
-                  service rate.
+                  PROMVANTA will calculate the price from the
+                  configured service rate.
                 </small>
               </div>
             )}
@@ -363,4 +376,4 @@ export default function CreateCampaignPage() {
       </div>
     </main>
   );
-}
+  }
