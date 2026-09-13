@@ -133,7 +133,7 @@ export default function CreateCampaignPage() {
             <div className={styles.options}>
               {platforms.map((item) => (
                 <button
-                  key={item.id}
+                  key={item}
                   type="button"
                   className={`${styles.option} ${
                     platform === item.name ? styles.selected : ""
