@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import styles from "./create-campaign.module.css";
 import { campaignTypes } from "@/lib/campaigns";
 import { platforms, services } from "@/lib/platforms";
-import { calculateQuantityPrice } from "@/lib/pricing";
+import { getPricingRule } from "@/lib/get-pricing-rule";
 
 export default function CreateCampaignPage() {
   const [type, setType] = useState("");
@@ -15,12 +15,22 @@ export default function CreateCampaignPage() {
 
   const availableServices = useMemo(() => {
     if (!platform) return [];
+
     return services[platform as keyof typeof services] ?? [];
   }, [platform]);
 
-  const price = service
-    ? calculateQuantityPrice(quantity, 3)
+  const pricingRule = getPricingRule(platform, service);
+
+  const calculatedPrice = pricingRule
+    ? Math.max(
+        quantity * pricingRule.rate,
+        pricingRule.minimumCampaignValue
+      )
     : 0;
+
+  const quantityTooLow =
+    pricingRule?.minimumQuantity !== undefined &&
+    quantity < pricingRule.minimumQuantity;
 
   return (
     <main className={styles.page}>
@@ -40,8 +50,13 @@ export default function CreateCampaignPage() {
             {campaignTypes.map((item) => (
               <button
                 key={item.id}
+                type="button"
                 className={styles.option}
-                onClick={() => setType(item.id)}
+                onClick={() => {
+                  setType(item.id);
+                  setPlatform("");
+                  setService("");
+                }}
               >
                 <strong>{item.name}</strong>
                 <p className={styles.note}>{item.description}</p>
@@ -56,6 +71,7 @@ export default function CreateCampaignPage() {
 
             <label className={styles.label}>
               Platform / Destination
+
               <select
                 className={styles.select}
                 value={platform}
@@ -76,6 +92,7 @@ export default function CreateCampaignPage() {
 
             <label className={styles.label}>
               Promotion Link
+
               <input
                 className={styles.input}
                 type="url"
@@ -95,6 +112,7 @@ export default function CreateCampaignPage() {
               {availableServices.map((item) => (
                 <button
                   key={item}
+                  type="button"
                   className={styles.option}
                   onClick={() => setService(item)}
                 >
@@ -109,32 +127,55 @@ export default function CreateCampaignPage() {
           <section className={styles.card}>
             <h2>4. Quantity Needed</h2>
 
-            <p className={styles.note}>
-              PROMVANTA calculates your price from the configured service
-              rate.
-            </p>
+            {!pricingRule ? (
+              <p className={styles.note}>
+                This service is currently unavailable. Please choose another
+                supported service.
+              </p>
+            ) : (
+              <>
+                <p className={styles.note}>
+                  Enter the quantity you need. PROMVANTA calculates the price
+                  using the configured pricing rule.
+                </p>
 
-            <input
-              className={styles.input}
-              type="number"
-              min="1"
-              value={quantity}
-              onChange={(e) => setQuantity(Number(e.target.value))}
-            />
+                <input
+                  className={styles.input}
+                  type="number"
+                  min="1"
+                  value={quantity}
+                  onChange={(e) =>
+                    setQuantity(Math.max(1, Number(e.target.value)))
+                  }
+                />
 
-            <p>Calculated campaign price</p>
-            <div className={styles.price}>
-              ₦{price.toLocaleString()}
-            </div>
+                {quantityTooLow && (
+                  <p className={styles.note}>
+                    Minimum quantity for this service is{" "}
+                    {pricingRule.minimumQuantity?.toLocaleString()}.
+                  </p>
+                )}
 
-            <p className={styles.note}>
-              Minimum campaign value: ₦2,500. Actual provider availability and
-              pricing will be verified before payment.
-            </p>
+                <p>Calculated campaign price</p>
 
-            <button className={styles.primary}>
-              Continue to Review
-            </button>
+                <div className={styles.price}>
+                  ₦{calculatedPrice.toLocaleString()}
+                </div>
+
+                <p className={styles.note}>
+                  Minimum campaign value is ₦
+                  {pricingRule.minimumCampaignValue.toLocaleString()}.
+                </p>
+
+                <button
+                  type="button"
+                  className={styles.primary}
+                  disabled={quantityTooLow || !link}
+                >
+                  Continue to Review
+                </button>
+              </>
+            )}
           </section>
         )}
       </div>
