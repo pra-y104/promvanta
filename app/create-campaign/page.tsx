@@ -1,120 +1,182 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import styles from "./create-campaign.module.css";
-import { campaignTypes } from "@/lib/campaigns";
-import { platforms, services } from "@/lib/platforms";
+import {
+  campaignTypes,
+  getServicesForCampaignType,
+} from "@/lib/campaigns";
+import { platforms } from "@/lib/platforms";
 import { getPricingRule } from "@/lib/get-pricing-rule";
+import { formatNaira } from "@/lib/format";
+import styles from "./create-campaign.module.css";
 
 export default function CreateCampaignPage() {
-  const [type, setType] = useState("");
+  const [campaignType, setCampaignType] = useState("");
   const [platform, setPlatform] = useState("");
   const [service, setService] = useState("");
-  const [link, setLink] = useState("");
-  const [quantity, setQuantity] = useState(500);
+  const [destination, setDestination] = useState("");
+  const [quantity, setQuantity] = useState("");
 
-  const availableServices = useMemo(() => {
-    if (!platform) return [];
+  const availableServices = useMemo(
+    () => getServicesForCampaignType(campaignType),
+    [campaignType]
+  );
 
-    return services[platform as keyof typeof services] ?? [];
-  }, [platform]);
+  const pricingRule = useMemo(() => {
+    if (!platform || !service) return null;
+    return getPricingRule(platform, service);
+  }, [platform, service]);
 
-  const pricingRule = getPricingRule(platform, service);
+  const calculatedPrice = useMemo(() => {
+    if (!pricingRule || pricingRule.mode !== "quantity") return 0;
 
-  const calculatedPrice = pricingRule
-    ? Math.max(
-        quantity * pricingRule.rate,
-        pricingRule.minimumCampaignValue
-      )
-    : 0;
+    const requestedQuantity = Number(quantity);
 
-  const quantityTooLow =
-    pricingRule?.minimumQuantity !== undefined &&
-    quantity < pricingRule.minimumQuantity;
+    if (!Number.isFinite(requestedQuantity) || requestedQuantity <= 0) {
+      return 0;
+    }
+
+    return requestedQuantity * pricingRule.rate;
+  }, [pricingRule, quantity]);
+
+  const meetsMinimum =
+    calculatedPrice >= (pricingRule?.minimumCampaignValue ?? 2500);
+
+  function handleCampaignTypeChange(type: string) {
+    setCampaignType(type);
+    setPlatform("");
+    setService("");
+    setQuantity("");
+  }
+
+  function handlePlatformChange(value: string) {
+    setPlatform(value);
+    setService("");
+    setQuantity("");
+  }
+
+  function handleContinue() {
+    if (!campaignType || !service || !destination) {
+      alert("Please complete all required fields.");
+      return;
+    }
+
+    if (pricingRule?.mode === "quantity") {
+      const requestedQuantity = Number(quantity);
+
+      if (!Number.isFinite(requestedQuantity) || requestedQuantity <= 0) {
+        alert("Please enter a valid quantity.");
+        return;
+      }
+
+      if (
+        pricingRule.minimumQuantity &&
+        requestedQuantity < pricingRule.minimumQuantity
+      ) {
+        alert(
+          `Minimum quantity for this service is ${pricingRule.minimumQuantity}.`
+        );
+        return;
+      }
+
+      if (!meetsMinimum) {
+        alert(
+          "Minimum campaign value is ₦2,500. Please increase your requested quantity or adjust your campaign selection to continue."
+        );
+        return;
+      }
+    }
+
+    window.location.href = `/review-campaign?type=${encodeURIComponent(
+      campaignType
+    )}&platform=${encodeURIComponent(platform)}&service=${encodeURIComponent(
+      service
+    )}&destination=${encodeURIComponent(destination)}&quantity=${encodeURIComponent(
+      quantity
+    )}`;
+  }
 
   return (
     <main className={styles.page}>
       <div className={styles.container}>
         <div className={styles.header}>
+          <p className={styles.eyebrow}>PROMVANTA</p>
           <h1>Create Campaign</h1>
           <p>
-            Tell PROMVANTA what you want to promote and what you want to
-            achieve.
+            Tell us what you want to promote and what you want to achieve.
           </p>
         </div>
 
         <section className={styles.card}>
-          <h2>1. What are you promoting?</h2>
+          <h2>1. Campaign Type</h2>
 
-          <div className={styles.grid}>
+          <div className={styles.options}>
             {campaignTypes.map((item) => (
               <button
-                key={item.id}
+                key={item}
                 type="button"
-                className={styles.option}
-                onClick={() => {
-                  setType(item.id);
-                  setPlatform("");
-                  setService("");
-                }}
+                className={`${styles.option} ${
+                  campaignType === item ? styles.selected : ""
+                }`}
+                onClick={() => handleCampaignTypeChange(item)}
               >
-                <strong>{item.name}</strong>
-                <p className={styles.note}>{item.description}</p>
+                {item}
               </button>
             ))}
           </div>
         </section>
 
-        {type && (
+        {campaignType && (
           <section className={styles.card}>
-            <h2>2. Where?</h2>
+            <h2>2. Platform / Destination</h2>
 
-            <label className={styles.label}>
-              Platform / Destination
-
-              <select
-                className={styles.select}
-                value={platform}
-                onChange={(e) => {
-                  setPlatform(e.target.value);
-                  setService("");
-                }}
-              >
-                <option value="">Select platform</option>
-
-                {platforms.map((item) => (
-                  <option key={item} value={item}>
-                    {item}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <label className={styles.label}>
-              Promotion Link
-
-              <input
-                className={styles.input}
-                type="url"
-                placeholder="https://..."
-                value={link}
-                onChange={(e) => setLink(e.target.value)}
-              />
-            </label>
+            <div className={styles.options}>
+              {platforms.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  className={`${styles.option} ${
+                    platform === item.name ? styles.selected : ""
+                  }`}
+                  onClick={() => handlePlatformChange(item.name)}
+                >
+                  {item.name}
+                </button>
+              ))}
+            </div>
           </section>
         )}
 
-        {platform && (
+        {campaignType && platform && (
           <section className={styles.card}>
-            <h2>3. What is your goal?</h2>
+            <h2>3. Promotion Link</h2>
 
-            <div className={styles.grid}>
+            <input
+              className={styles.input}
+              type="url"
+              placeholder="Paste your public promotion link"
+              value={destination}
+              onChange={(event) => setDestination(event.target.value)}
+            />
+          </section>
+        )}
+
+        {campaignType && platform && destination && (
+          <section className={styles.card}>
+            <h2>4. Choose One Goal</h2>
+
+            <div className={styles.options}>
               {availableServices.map((item) => (
                 <button
                   key={item}
                   type="button"
-                  className={styles.option}
-                  onClick={() => setService(item)}
+                  className={`${styles.option} ${
+                    service === item ? styles.selected : ""
+                  }`}
+                  onClick={() => {
+                    setService(item);
+                    setQuantity("");
+                  }}
                 >
                   {item}
                 </button>
@@ -123,60 +185,42 @@ export default function CreateCampaignPage() {
           </section>
         )}
 
-        {service && (
+        {service && pricingRule?.mode === "quantity" && (
           <section className={styles.card}>
-            <h2>4. Quantity Needed</h2>
+            <h2>5. Quantity Needed</h2>
 
-            {!pricingRule ? (
-              <p className={styles.note}>
-                This service is currently unavailable. Please choose another
-                supported service.
-              </p>
-            ) : (
-              <>
-                <p className={styles.note}>
-                  Enter the quantity you need. PROMVANTA calculates the price
-                  using the configured pricing rule.
-                </p>
+            <input
+              className={styles.input}
+              type="number"
+              min={pricingRule.minimumQuantity ?? 1}
+              placeholder="Enter quantity"
+              value={quantity}
+              onChange={(event) => setQuantity(event.target.value)}
+            />
 
-                <input
-                  className={styles.input}
-                  type="number"
-                  min="1"
-                  value={quantity}
-                  onChange={(e) =>
-                    setQuantity(Math.max(1, Number(e.target.value)))
-                  }
-                />
+            {quantity && calculatedPrice > 0 && (
+              <div className={styles.summary}>
+                <p>Calculated service price</p>
+                <strong>{formatNaira(calculatedPrice)}</strong>
 
-                {quantityTooLow && (
-                  <p className={styles.note}>
-                    Minimum quantity for this service is{" "}
-                    {pricingRule.minimumQuantity?.toLocaleString()}.
+                {!meetsMinimum && (
+                  <p className={styles.warning}>
+                    Minimum campaign value is ₦2,500.
                   </p>
                 )}
-
-                <p>Calculated campaign price</p>
-
-                <div className={styles.price}>
-                  ₦{calculatedPrice.toLocaleString()}
-                </div>
-
-                <p className={styles.note}>
-                  Minimum campaign value is ₦
-                  {pricingRule.minimumCampaignValue.toLocaleString()}.
-                </p>
-
-                <button
-                  type="button"
-                  className={styles.primary}
-                  disabled={quantityTooLow || !link}
-                >
-                  Continue to Review
-                </button>
-              </>
+              </div>
             )}
           </section>
+        )}
+
+        {service && (
+          <button
+            type="button"
+            className={styles.continueButton}
+            onClick={handleContinue}
+          >
+            Continue to Review
+          </button>
         )}
       </div>
     </main>
