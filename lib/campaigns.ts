@@ -1,48 +1,95 @@
-import type { CampaignType } from "./types";
-
-export const campaignTypes: {
-  id: CampaignType;
-  name: string;
-  description: string;
-}[] = [
-  {
-    id: "social",
-    name: "Social Media Promotion",
-    description: "Promote eligible social content and profiles.",
-  },
-  {
-    id: "video",
-    name: "Video Promotion",
-    description: "Promote videos with legitimate advertising.",
-  },
-  {
-    id: "music",
-    name: "Music Promotion",
-    description: "Promote music and music content.",
-  },
-  {
-    id: "website",
-    name: "Website Promotion",
-    description: "Drive legitimate traffic and awareness.",
-  },
-  {
-    id: "product",
-    name: "Product Promotion",
-    description: "Promote products and offers.",
-  },
-  {
-    id: "business",
-    name: "Business Promotion",
-    description: "Increase legitimate business awareness.",
-  },
-  {
-    id: "app",
-    name: "App Promotion",
-    description: "Promote eligible apps and conversions.",
-  },
-  {
-    id: "creator",
-    name: "Creator Promotion",
-    description: "Help creators reach relevant audiences.",
-  },
+export const campaignTypes = [
+  "Social Media Promotion",
+  "Video Promotion",
+  "Music Promotion",
+  "Website Promotion",
+  "Product Promotion",
+  "Business Promotion",
+  "App Promotion",
+  "Creator Promotion",
 ];
+
+export const servicesByCampaignType: Record<string, string[]> = {
+  "Social Media Promotion": [
+    "Followers",
+    "Reach",
+    "Likes",
+    "Comments",
+    "Shares",
+    "Engagement",
+    "Audience Growth",
+    "Content Reach",
+    "Video Views",
+  ],
+
+  "Video Promotion": [
+    "Video Views",
+    "Reach",
+    "Engagement",
+    "Audience Growth",
+    "Subscribers",
+    "Likes",
+    "Comments",
+    "Shares",
+  ],
+
+  "Music Promotion": [
+    "Music Discovery",
+    "Music/Content Reach",
+    "Video Views",
+    "Audience Growth",
+    "Followers",
+    "Subscribers",
+    "Engagement",
+    "Streaming Promotion",
+  ],
+
+  "Website Promotion": [
+    "Website Visits",
+    "Landing-Page Traffic",
+    "Brand Awareness",
+    "Leads / Sign-ups",
+    "Sales / Conversions",
+  ],
+
+  "Product Promotion": [
+    "Reach",
+    "Brand Awareness",
+    "Website Visits",
+    "Leads",
+    "Sales / Conversions",
+    "Engagement",
+  ],
+
+  "Business Promotion": [
+    "Brand Awareness",
+    "Reach",
+    "Website Visits",
+    "Leads",
+    "Local Promotion",
+    "Sales / Conversions",
+  ],
+
+  "App Promotion": [
+    "App Visits",
+    "App Installs",
+    "Sign-ups",
+    "Engagement",
+    "Brand Awareness",
+    "Conversions",
+  ],
+
+  "Creator Promotion": [
+    "Followers",
+    "Subscribers",
+    "Video Views",
+    "Reach",
+    "Engagement",
+    "Audience Growth",
+    "Content Reach",
+  ],
+};
+
+export function getServicesForCampaignType(campaignType: string) {
+  return servicesByCampaignType[campaignType] ?? [];
+}
