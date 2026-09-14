@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>PROMVANTA — Legitimate promotion, real tracking</title>
+<style>
+:root{
+  --primary:#635bff;
+  --primary2:#7c3aed;
+  --dark:#17172b;
+  --text:#25253a;
+  --muted:#74748a;
+  --bg:#f7f7fc;
+  --card:#fff;
+  --border:#e9e9f2;
+  --success:#159957;
+  --warning:#d58b00;
+  --danger:#dc3545;
+  --shadow:0 12px 35px rgba(31,31,71,.08);
+  --radius:18px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);background:var(--bg)}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+a{text-decoration:none;color:inherit}
+.container{width:min(1160px,calc(100% - 36px));margin:auto}
+.hidden{display:none!important}
+.btn{border:0;border-radius:11px;padding:13px 19px;font-weight:700;transition:.2s}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary2));color:white;box-shadow:0 8px 20px rgba(99,91,255,.22)}
+.btn-light{background:#f1f1fa;color:var(--text)}
+.btn-outline{background:white;border:1px solid var(--border);color:var(--text)}
+.btn-danger{background:#fff0f1;color:var(--danger)}
+.btn-success{background:#eaf8f1;color:var(--success)}
+.navbar{height:76px;background:rgba(255,255,255,.94);backdrop-filter:blur(15px);border-bottom:1px solid var(--border);display:flex;align-items:center;position:sticky;top:0;z-index:50}
+.nav-inner{display:flex;align-items:center;justify-content:space-between}
+.logo{font-weight:900;letter-spacing:-.8px;font-size:22px;color:var(--dark)}
+.logo span{color:var(--primary)}
+.nav-links{display:flex;gap:27px;color:#5f6074;font-size:14px;font-weight:600}
+.nav-actions{display:flex;gap:10px;align-items:center}
+.menu{display:none;border:0;background:none;font-size:25px}
+.hero{padding:90px 0 70px;background:radial-gradient(circle at 80% 20%,rgba(124,58,237,.12),transparent 34%),linear-gradient(180deg,#fff,#f7f7fc)}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:65px;align-items:center}
+.badge{display:inline-flex;padding:8px 13px;background:#eeedff;color:#5b52df;border-radius:30px;font-weight:800;font-size:12px;margin-bottom:20px}
+.hero h1{font-size:clamp(42px,6vw,70px);line-height:1.02;letter-spacing:-3px;margin:0 0 22px;color:var(--dark)}
+.hero h1 span{background:linear-gradient(135deg,var(--primary),var(--primary2));-webkit-background-clip:text;color:transparent}
+.hero p{font-size:18px;line-height:1.7;color:var(--muted);max-width:650px}
+.hero-actions{display:flex;gap:12px;margin:30px 0}
+.trust{font-size:13px;color:#68687b;font-weight:700}
+.trust strong{color:var(--success)}
+.hero-card{background:white;border:1px solid var(--border);border-radius:25px;padding:22px;box-shadow:var(--shadow);transform:rotate(1deg)}
+.demo-label{font-size:10px;letter-spacing:1px;font-weight:900;color:#9b5c00;background:#fff4dc;padding:5px 8px;border-radius:5px;display:inline-block}
+.dash-head{display:flex;justify-content:space-between;align-items:center;margin:15px 0 20px}
+.dash-title{font-weight:850;font-size:18px}
+.avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#e9e7ff;color:var(--primary);font-weight:900}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.stat{background:#f8f8fc;padding:15px;border-radius:14px}
+.stat small{color:var(--muted);display:block;margin-bottom:8px}
+.stat strong{font-size:20px}
+.chart{height:150px;margin-top:15px;border-radius:14px;background:linear-gradient(180deg,#f5f3ff,#fff);position:relative;overflow:hidden}
+.chart svg{width:100%;height:100%}
+section{padding:80px 0}
+.section-head{text-align:center;max-width:690px;margin:0 auto 42px}
+.section-head h2{font-size:36px;letter-spacing:-1.5px;margin:0 0 12px}
+.section-head p{color:var(--muted);line-height:1.7}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:17px}
+.card{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:22px;box-shadow:0 4px 18px rgba(20,20,60,.035)}
+.icon{width:44px;height:44px;border-radius:13px;background:#eeedff;color:var(--primary);display:grid;place-items:center;font-size:20px;margin-bottom:17px}
+.card h3{margin:0 0 8px;font-size:16px}
+.card p{margin:0;color:var(--muted);font-size:13px;line-height:1.65}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.step{position:relative}
+.num{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--dark);color:white;font-weight:900;margin-bottom:15px}
+.pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.price-card{background:white;border:1px solid var(--border);border-radius:22px;padding:28px}
+.price-card.featured{border:2px solid var(--primary);box-shadow:var(--shadow)}
+.price{font-size:34px;font-weight:900;margin:12px 0}
+.price-card ul{list-style:none;padding:0;color:var(--muted);line-height:2}
+.faq{max-width:800px;margin:auto}
+.faq-item{background:white;border:1px solid var(--border);border-radius:14px;margin-bottom:10px;overflow:hidden}
+.faq-q{padding:18px;font-weight:800;display:flex;justify-content:space-between;cursor:pointer}
+.faq-a{padding:0 18px 18px;color:var(--muted);line-height:1.6;display:none}
+.faq-item.open .faq-a{display:block}
+.cta{background:linear-gradient(135deg,#19182d,#30276d);color:white;border-radius:28px;padding:55px;text-align:center}
+.cta p{color:#c9c8da}
+footer{background:#17172b;color:#b8b7c9;padding:55px 0}
+.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:50px}
+.footer-title{color:white;font-weight:900;margin-bottom:16px}
+.footer-links{display:grid;gap:10px;font-size:13px}
+.footer-bottom{border-top:1px solid #323148;margin-top:35px;padding-top:20px;font-size:12px}
+
+/* APP */
+.app{min-height:100vh}
+.app-shell{display:flex;min-height:100vh}
+.sidebar{width:245px;background:white;border-right:1px solid var(--border);position:fixed;left:0;top:0;bottom:0;padding:22px 15px;z-index:40}
+.side-logo{padding:8px 12px 25px}
+.side-nav{display:grid;gap:5px}
+.side-btn{border:0;background:transparent;text-align:left;padding:12px 13px;border-radius:10px;color:#68687c;font-weight:700;font-size:13px}
+.side-btn:hover,.side-btn.active{background:#eeedff;color:var(--primary)}
+.side-bottom{position:absolute;bottom:20px;left:15px;right:15px}
+.main{margin-left:245px;min-height:100vh;width:calc(100% - 245px)}
+.app-top{height:72px;background:white;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:30}
+.mobile-menu{display:none}
+.userbox{display:flex;align-items:center;gap:10px}
+.page{padding:30px;max-width:1250px;margin:auto}
+.page-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}
+.page-title h1{font-size:27px;margin:0;letter-spacing:-.8px}
+.page-title p{margin:6px 0;color:var(--muted);font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:22px}
+.app-stat{background:white;border:1px solid var(--border);border-radius:17px;padding:19px}
+.app-stat .label{color:var(--muted);font-size:12px}
+.app-stat .value{font-size:25px;font-weight:900;margin-top:8px}
+.app-grid{display:grid;grid-template-columns:1.35fr .65fr;gap:20px}
+.panel{background:white;border:1px solid var(--border);border-radius:18px;padding:22px;margin-bottom:20px}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.panel-head h3{margin:0;font-size:16px}
+.empty{text-align:center;padding:55px 20px;color:var(--muted)}
+.empty-icon{font-size:35px;margin-bottom:12px}
+.table{width:100%;border-collapse:collapse}
+.table th,.table td{text-align:left;padding:13px 8px;border-bottom:1px solid var(--border);font-size:12px}
+.table th{color:var(--muted)}
+.status{display:inline-flex;padding:5px 8px;border-radius:20px;font-size:10px;font-weight:800}
+.status.green{background:#eaf8f1;color:var(--success)}
+.status.orange{background:#fff5df;color:var(--warning)}
+.status.gray{background:#f0f0f5;color:#777}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:17px}
+.field{display:grid;gap:7px;margin-bottom:16px}
+.field.full{grid-column:1/-1}
+.field label{font-size:12px;font-weight:800}
+.field input,.field select,.field textarea{width:100%;border:1px solid var(--border);border-radius:10px;padding:13px;background:#fff;outline:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px #eeedff}
+.help{font-size:11px;color:var(--muted)}
+.price-box{background:#f7f6ff;border:1px solid #e5e2ff;border-radius:15px;padding:20px;margin:10px 0 20px}
+.price-line{display:flex;justify-content:space-between;margin:8px 0;font-size:13px}
+.price-total{font-size:22px;font-weight:900;border-top:1px solid #ddd9ff;padding-top:12px;margin-top:12px}
+.stepper{display:flex;gap:7px;margin-bottom:25px}
+.step-pill{padding:7px 11px;border-radius:20px;background:#eeeef5;color:#777;font-size:11px;font-weight:800}
+.step-pill.active{background:#eeedff;color:var(--primary)}
+.notice{padding:13px 15px;border-radius:11px;background:#fff8e9;color:#855f00;font-size:12px;margin-bottom:16px}
+.success-box{padding:18px;background:#eaf8f1;color:#176c45;border-radius:13px}
+.auth-wrap{min-height:100vh;display:grid;place-items:center;padding:25px;background:linear-gradient(135deg,#f8f7ff,#fff)}
+.auth-card{width:min(440px,100%);background:white;border:1px solid var(--border);border-radius:23px;padding:32px;box-shadow:var(--shadow)}
+.auth-card h1{margin:20px 0 8px}
+.auth-card p{color:var(--muted);font-size:13px;line-height:1.6}
+.auth-actions{display:grid;gap:10px;margin-top:20px}
+.toast{position:fixed;right:20px;bottom:20px;background:#19182d;color:white;padding:14px 18px;border-radius:11px;box-shadow:var(--shadow);z-index:100;max-width:330px;font-size:13px}
+.modal-bg{position:fixed;inset:0;background:rgba(15,15,35,.45);display:grid;place-items:center;z-index:90;padding:20px}
+.modal{background:white;border-radius:20px;padding:25px;width:min(500px,100%);box-shadow:var(--shadow)}
+.modal h2{margin-top:0}
+.profile-row{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border);font-size:13px}
+@media(max-width:900px){
+ .hero-grid{grid-template-columns:1fr}.hero-card{display:none}
+ .cards,.steps{grid-template-columns:1fr 1fr}.pricing{grid-template-columns:1fr}
+ .nav-links{display:none}.menu{display:block}.nav-actions .btn-light{display:none}
+ .sidebar{transform:translateX(-100%);transition:.25s}.sidebar.open{transform:translateX(0)}
+ .main{margin-left:0;width:100%}.mobile-menu{display:block;border:0;background:none;font-size:22px}
+ .stats{grid-template-columns:1fr 1fr}.app-grid{grid-template-columns:1fr}
+ .footer-grid{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+ .container{width:min(100% - 24px,1160px)}
+ .hero{padding:55px 0}.hero h1{font-size:43px;letter-spacing:-2px}
+ .hero-actions{flex-direction:column}.cards,.steps,.stats,.form-grid{grid-template-columns:1fr}
+ section{padding:60px 0}.page{padding:20px 14px}.app-top{padding:0 15px}
+ .page-title{align-items:flex-start;gap:12px;flex-direction:column}
+ .cta{padding:35px 20px}
+}
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+<div id="toast" class="toast hidden"></div>
+
+<script>
+/* =========================================================
+   PROMVANTA SINGLE-FILE APPLICATION
+   Frontend prototype. Real authentication, payments,
+   provider calls and authorization must be server-side.
+========================================================= */
+
+const APP="PROMVANTA";
+
+const state={
+  screen:"home",
+  user:null,
+  authMode:"login",
+  campaignStep:1,
+  campaign:{
+    type:"",
+    platform:"",
+    link:"",
+    service:"",
+    inputType:"",
+    quantity:"",
+    budget:""
+  },
+  campaigns:[],
+  transactions:[],
+  wallet:0,
+  tickets:[],
+  referralCode:"",
+  sidebar:false
+};
+
+const services={
+ "Social Media Promotion":{
+   platforms:["Instagram","TikTok","Facebook","X"],
+   goals:["Followers","Reach","Likes","Comments","Shares","Engagement","Audience Growth","Content Reach","Video Views"]
+ },
+ "Video Promotion":{
+   platforms:["YouTube","TikTok","Instagram","Facebook"],
+   goals:["Video Views","Reach","Engagement","Audience Growth","Subscribers","Followers","Likes","Comments","Shares"]
+ },
+ "Music Promotion":{
+   platforms:["YouTube","TikTok","Instagram","Music Destinations"],
+   goals:["Music Discovery","Music/Content Reach","Video Views","Audience Growth","Followers","Subscribers","Engagement"]
+ },
+ "Website Promotion":{
+   platforms:["Website"],
+   goals:["Website Visits","Landing-Page Traffic","Brand Awareness","Leads / Sign-ups","Sales / Conversions"]
+ },
+ "Product Promotion":{
+   platforms:["Website","Instagram","Facebook","TikTok","YouTube"],
+   goals:["Reach","Brand Awareness","Website Visits","Leads","Sales / Conversions","Engagement"]
+ },
+ "Business Promotion":{
+   platforms:["Website","Instagram","Facebook","TikTok","YouTube"],
+   goals:["Brand Awareness","Reach","Website Visits","Leads","Local Promotion","Sales / Conversions"]
+ },
+ "App Promotion":{
+   platforms:["App Landing Page","Website"],
+   goals:["App Visits","App Installs","Sign-ups","Engagement","Brand Awareness","Conversions"]
+ },
+ "Creator Promotion":{
+   platforms:["YouTube","TikTok","Instagram","Facebook"],
+   goals:["Followers","Subscribers","Video Views","Reach","Engagement","Audience Growth","Content Reach"]
+ }
+};
+
+const quantityGoals=[
+ "Followers","Subscribers","Likes","Comments","Shares","Video Views",
+ "Website Visits","App Visits"
+];
+
+function money(n){
+ return "₦"+Number(n||0).toLocaleString("en-NG",{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+function toast(msg){
+ const el=document.getElementById("toast");
+ el.textContent=msg;
+ el.classList.remove("hidden");
+ clearTimeout(window.toastTimer);
+ window.toastTimer=setTimeout(()=>el.classList.add("hidden"),2800);
+}
+
+function save(){
+ try{
+  localStorage.setItem("promvanta_state",JSON.stringify({
+   user:state.user,campaigns:state.campaigns,transactions:state.transactions,
+   wallet:state.wallet,tickets:state.tickets,referralCode:state.referralCode
+  }));
+ }catch(e){}
+}
+
+function load(){
+ try{
+  const x=JSON.parse(localStorage.getItem("promvanta_state"));
+  if(x){
+   Object.assign(state,{
+    user:x.user||null,campaigns:x.campaigns||[],
+    transactions:x.transactions||[],wallet:x.wallet||0,
+    tickets:x.tickets||[],referralCode:x.referralCode||""
+   });
+  }
+ }catch(e){}
+}
+
+function go(screen){
+ state.screen=screen;
+ state.sidebar=false;
+ window.scrollTo(0,0);
+ render();
+}
+
+function logo(){
+ return `<div class="logo">PROMV<span>ANTA</span></div>`;
+}
+
+function homepage(){
+ return `
+<nav class="navbar">
+ <div class="container nav-inner">
+  <a class="logo" href="#" onclick="go('home')">PROMV<span>ANTA</span></a>
+  <div class="nav-links">
+   <a href="#how">How It Works</a>
+   <a href="#campaigns">Campaigns</a>
+   <a href="#pricing">Pricing</a>
+   <a href="#faq">FAQ</a>
+  </div>
+  <div class="nav-actions">
+   <button class="btn btn-light" onclick="openAuth('login')">Sign In</button>
+   <button class="btn btn-primary" onclick="openAuth('register')">Create Account</button>
+  </div>
+  <button class="menu" onclick="toast('Use the buttons above to get started')">☰</button>
+ </div>
+</nav>
+
+<section class="hero">
+ <div class="container hero-grid">
+  <div>
+   <div class="badge">✓ LEGITIMATE DIGITAL PROMOTION</div>
+   <h1>Promote smarter.<br><span>Reach further.</span></h1>
+   <p>Launch legitimate digital promotion campaigns, manage your budget and track real campaign results from one simple platform.</p>
+   <div class="hero-actions">
+    <button class="btn btn-primary" onclick="openAuth('register')">Create a Campaign →</button>
+    <button class="btn btn-outline" onclick="document.getElementById('how').scrollIntoView()">See How It Works</button>
+   </div>
+   <div class="trust">✓ <strong>No fake engagement.</strong> No bots. Real campaigns only.</div>
+  </div>
+
+  <div class="hero-card">
+   <span class="demo-label">DEMO DATA</span>
+   <div class="dash-head">
+    <div class="dash-title">Campaign performance</div>
+    <div class="avatar">P</div>
+   </div>
+   <div class="stat-grid">
+    <div class="stat"><small>Wallet</small><strong>₦48,500</strong></div>
+    <div class="stat"><small>Active</small><strong>3</strong></div>
+    <div class="stat"><small>Reach</small><strong>12.4k</strong></div>
+   </div>
+   <div class="chart">
+    <svg viewBox="0 0 500 160" preserveAspectRatio="none">
+     <path d="M0 130 C70 120 80 90 140 105 S220 65 275 88 S350 30 400 55 S450 25 500 35" fill="none" stroke="#635bff" stroke-width="5"/>
+     <path d="M0 130 C70 120 80 90 140 105 S220 65 275 88 S350 30 400 55 S450 25 500 35 L500 160 L0 160Z" fill="#eeedff"/>
+    </svg>
+   </div>
+   <small style="display:block;margin-top:12px;color:#888">DEMO DATA — illustrative campaign results only</small>
+  </div>
+ </div>
+</section>
+
+<section id="campaigns">
+ <div class="container">
+  <div class="section-head">
+   <h2>Promotion built around your goal</h2>
+   <p>Choose what you want to promote and what you want to achieve. PROMVANTA only shows services that fit your campaign.</p>
+  </div>
+  <div class="cards">
+   ${[
+    ["♪","Music Promotion","Reach listeners and grow discovery around your music."],
+    ["▶","Video Promotion","Promote videos through legitimate digital advertising."],
+    ["↗","Website Traffic","Drive relevant visitors to your website or landing page."],
+    ["◎","Social Content","Promote eligible social content and audience growth."],
+    ["◇","Product Promotion","Put products in front of relevant audiences."],
+    ["▣","Business Promotion","Build awareness, traffic and leads for your business."],
+    ["◈","Brand Awareness","Build visibility through legitimate campaigns."],
+    ["✦","Creator Promotion","Help creators reach new audiences and grow."],
+   ].map(x=>`<div class="card"><div class="icon">${x[0]}</div><h3>${x[1]}</h3><p>${x[2]}</p></div>`).join("")}
+  </div>
+ </div>
+</section>
+
+<section id="how" style="background:white">
+ <div class="container">
+  <div class="section-head"><h2>How PROMVANTA works</h2><p>Simple from campaign creation to real performance tracking.</p></div>
+  <div class="steps">
+   ${[
+    ["1","Create your campaign","Pick a category and add your public promotion URL."],
+    ["2","Choose your goal","Tell PROMVANTA what you want to achieve."],
+    ["3","Pay securely","Review the calculated price before payment."],
+    ["4","Track your campaign","See real results returned by connected providers."]
+   ].map(x=>`<div class="step"><div class="num">${x[0]}</div><h3>${x[1]}</h3><p style="color:var(--muted);line-height:1.6;font-size:13px">${x[2]}</p></div>`).join("")}
+  </div>
+ </div>
+</section>
+
+<section id="pricing">
+ <div class="container">
+  <div class="section-head"><h2>Simple, transparent pricing</h2><p>Your final price is calculated from the selected service and configured campaign economics. No permanent fixed packages.</p></div>
+  <div class="pricing">
+   <div class="price-card"><h3>Starter</h3><div class="price">₦0</div><small>platform access</small><ul><li>✓ Campaign creation</li><li>✓ Wallet & transactions</li><li>✓ Real campaign tracking</li><li>✓ Email support</li></ul><button class="btn btn-outline" onclick="openAuth('register')">Start free</button></div>
+   <div class="price-card featured"><h3>Growth</h3><div class="price">10%</div><small>example platform fee</small><ul><li>✓ Everything in Starter</li><li>✓ Priority campaign review</li><li>✓ Referral rewards when enabled</li><li>✓ Advanced analytics</li></ul><button class="btn btn-primary" onclick="openAuth('register')">Choose Growth</button></div>
+   <div class="price-card"><h3>Business</h3><div class="price">Custom</div><small>enterprise</small><ul><li>✓ Everything in Growth</li><li>✓ Dedicated support</li><li>✓ Custom campaign configurati
