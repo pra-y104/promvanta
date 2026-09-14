@@ -1,18 +1,20 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
-type Section =
-  | "home"
-  | "campaigns"
-  | "create"
-  | "wallet"
-  | "results"
-  | "transactions"
-  | "rewards"
-  | "invite"
-  | "support"
-  | "profile";
+const navItems = [
+  ["Home", "/dashboard"],
+  ["Campaigns", "/campaigns"],
+  ["Create Campaign", "/create-campaign"],
+  ["Wallet", "/wallet"],
+  ["Results", "/results"],
+  ["Transactions", "/transactions"],
+  ["Rewards", "/rewards"],
+  ["Invite & Earn", "/invite"],
+  ["Support", "/support"],
+  ["Profile & Settings", "/profile"],
+];
 
 const campaignTypes = [
   "Social Media Promotion",
@@ -25,149 +27,53 @@ const campaignTypes = [
   "Creator Promotion",
 ];
 
-const services: Record<string, string[]> = {
-  "Social Media Promotion": [
-    "Followers",
-    "Reach",
-    "Likes",
-    "Comments",
-    "Shares",
-    "Engagement",
-    "Audience Growth",
-    "Content Reach",
-    "Video Views",
-  ],
-  "Video Promotion": [
-    "Video Views",
-    "Reach",
-    "Engagement",
-    "Subscribers",
-    "Likes",
-    "Comments",
-    "Shares",
-    "Audience Growth",
-  ],
-  "Music Promotion": [
-    "Music Discovery",
-    "Music Reach",
-    "Video Views",
-    "Audience Growth",
-    "Followers",
-    "Subscribers",
-    "Engagement",
-  ],
-  "Website Promotion": [
-    "Website Visits",
-    "Landing-Page Traffic",
-    "Brand Awareness",
-    "Leads / Sign-ups",
-    "Sales / Conversions",
-  ],
-  "Product Promotion": [
-    "Reach",
-    "Brand Awareness",
-    "Website Visits",
-    "Leads",
-    "Sales / Conversions",
-    "Engagement",
-  ],
-  "Business Promotion": [
-    "Brand Awareness",
-    "Reach",
-    "Website Visits",
-    "Leads",
-    "Local Promotion",
-    "Sales / Conversions",
-  ],
-  "App Promotion": [
-    "App Visits",
-    "App Installs",
-    "Sign-ups",
-    "Engagement",
-    "Brand Awareness",
-    "Conversions",
-  ],
-  "Creator Promotion": [
-    "Followers",
-    "Subscribers",
-    "Video Views",
-    "Reach",
-    "Engagement",
-    "Audience Growth",
-    "Content Reach",
-  ],
-};
-
-const platforms = [
-  "YouTube",
-  "TikTok",
-  "Instagram",
-  "Facebook",
-  "X",
-  "Google",
-  "Website",
-  "Music Platform",
+const services = [
+  "Followers",
+  "Reach",
+  "Likes",
+  "Comments",
+  "Shares",
+  "Engagement",
+  "Audience Growth",
+  "Content Reach",
+  "Video Views",
+  "Subscribers",
+  "Music Discovery",
+  "Music Reach",
+  "Website Visits",
+  "Landing-Page Traffic",
+  "Brand Awareness",
+  "Leads / Sign-ups",
+  "Sales / Conversions",
+  "Local Promotion",
+  "App Visits",
+  "App Installs",
+  "Sign-ups",
+  "Conversions",
 ];
 
-export default function Home() {
-  const [section, setSection] = useState<Section>("home");
-  const [mobileMenu, setMobileMenu] = useState(false);
-
-  const [campaignType, setCampaignType] = useState("");
-  const [platform, setPlatform] = useState("");
-  const [service, setService] = useState("");
-  const [destination, setDestination] = useState("");
+export default function HomePage() {
+  const [section, setSection] = useState("home");
+  const [campaignType, setCampaignType] = useState(campaignTypes[0]);
+  const [service, setService] = useState("Reach");
   const [quantity, setQuantity] = useState("");
-  const [budget, setBudget] = useState("");
 
-  const [campaignCreated, setCampaignCreated] = useState(false);
-
-  const go = (next: Section) => {
-    setSection(next);
-    setMobileMenu(false);
+  const displaySection = (name: string) => {
+    setSection(name);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const currentServices = campaignType
-    ? services[campaignType] || []
-    : [];
-
-  const isBudgetService =
-    service === "Brand Awareness" ||
-    service === "Reach" ||
-    service === "Leads" ||
-    service === "Leads / Sign-ups" ||
-    service === "Sales / Conversions" ||
-    service === "Conversions" ||
-    service === "Website Visits" ||
-    service === "Landing-Page Traffic" ||
-    service === "Local Promotion";
-
-  const amount = isBudgetService
-    ? Number(budget || 0)
-    : Number(quantity || 0) * 1;
-
-  const canContinue =
-    campaignType &&
-    service &&
-    destination &&
-    (isBudgetService ? Number(budget) > 0 : Number(quantity) > 0);
-
   return (
-    <main className="app">
+    <main className="page">
       <style jsx global>{`
         * {
           box-sizing: border-box;
         }
 
-        html {
-          scroll-behavior: smooth;
-        }
-
         body {
           margin: 0;
           background: #f7f8fc;
-          color: #172033;
+          color: #171b3a;
           font-family:
             Inter,
             ui-sans-serif,
@@ -176,6 +82,11 @@ export default function Home() {
             BlinkMacSystemFont,
             "Segoe UI",
             sans-serif;
+        }
+
+        a {
+          text-decoration: none;
+          color: inherit;
         }
 
         button,
@@ -188,74 +99,59 @@ export default function Home() {
           cursor: pointer;
         }
 
-        .app {
+        .page {
           min-height: 100vh;
           background: #f7f8fc;
         }
 
         .topbar {
           height: 72px;
-          background: rgba(255,255,255,.96);
-          border-bottom: 1px solid #e8eaf1;
+          background: white;
+          border-bottom: 1px solid #e9ebf3;
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 0 32px;
+          padding: 0 28px;
           position: sticky;
           top: 0;
-          z-index: 50;
-          backdrop-filter: blur(14px);
+          z-index: 20;
         }
 
         .brand {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          font-weight: 800;
-          font-size: 21px;
-          letter-spacing: -.5px;
+          font-size: 22px;
+          font-weight: 900;
+          letter-spacing: -0.7px;
           color: #171b3a;
         }
 
-        .brandMark {
-          width: 38px;
-          height: 38px;
-          border-radius: 11px;
-          display: grid;
-          place-items: center;
-          background: linear-gradient(135deg,#5b4df5,#7b61ff);
-          color: white;
-          font-weight: 900;
-          box-shadow: 0 8px 22px rgba(91,77,245,.22);
+        .brand span {
+          color: #5b4df5;
         }
 
         .tagline {
-          display: none;
+          font-size: 12px;
+          color: #737a91;
+          margin-top: 2px;
         }
 
-        .topActions {
+        .top-actions {
           display: flex;
-          gap: 10px;
           align-items: center;
+          gap: 12px;
         }
 
-        .headerButton {
-          border: 1px solid #e2e5ef;
-          background: white;
-          padding: 10px 16px;
-          border-radius: 10px;
-          color: #42485a;
-          font-weight: 650;
+        .login {
+          color: #5b4df5;
+          font-weight: 700;
         }
 
-        .primaryButton {
+        .primary {
           border: 0;
-          background: linear-gradient(135deg,#5b4df5,#7459f7);
+          background: #5b4df5;
           color: white;
           padding: 12px 18px;
           border-radius: 11px;
-          font-weight: 750;
-          box-shadow: 0 9px 22px rgba(91,77,245,.2);
+          font-weight: 800;
         }
 
         .layout {
@@ -264,620 +160,599 @@ export default function Home() {
         }
 
         .sidebar {
-          width: 246px;
-          background: #ffffff;
-          border-right: 1px solid #e8eaf1;
+          width: 245px;
+          background: white;
+          border-right: 1px solid #e9ebf3;
           padding: 22px 14px;
           flex-shrink: 0;
         }
 
-        .sideLabel {
+        .side-label {
+          color: #9499ab;
           font-size: 11px;
           font-weight: 800;
-          color: #9aa1b2;
-          letter-spacing: .08em;
-          padding: 12px 12px 8px;
           text-transform: uppercase;
+          letter-spacing: 0.8px;
+          padding: 0 12px;
+          margin: 8px 0 10px;
         }
 
-        .navButton {
+        .nav {
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
+        }
+
+        .nav button {
           width: 100%;
+          text-align: left;
           border: 0;
           background: transparent;
-          color: #646b7d;
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 11px 13px;
+          color: #596078;
+          padding: 12px;
           border-radius: 10px;
-          margin-bottom: 3px;
-          text-align: left;
-          font-weight: 620;
+          font-weight: 650;
         }
 
-        .navButton:hover {
-          background: #f3f1ff;
-          color: #5948e8;
-        }
-
-        .navButton.active {
-          background: #eeeaff;
-          color: #5948e8;
-          font-weight: 760;
+        .nav button:hover,
+        .nav button.active {
+          background: #f0eeff;
+          color: #5b4df5;
         }
 
         .content {
-          flex: 1;
-          min-width: 0;
-          padding: 32px;
-        }
-
-        .page {
-          max-width: 1180px;
-          margin: 0 auto;
-        }
-
-        .welcome {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-end;
-          gap: 20px;
-          margin-bottom: 28px;
-        }
-
-        .eyebrow {
-          color: #6d61df;
-          font-size: 13px;
-          font-weight: 750;
-          margin-bottom: 7px;
-        }
-
-        h1 {
-          margin: 0;
-          font-size: clamp(27px,4vw,38px);
-          line-height: 1.1;
-          letter-spacing: -.9px;
-          color: #171b3a;
-        }
-
-        h2 {
-          margin: 0;
-          font-size: 23px;
-          color: #171b3a;
-        }
-
-        .subtext {
-          color: #737b8d;
-          margin-top: 9px;
-          line-height: 1.6;
-        }
-
-        .cards {
-          display: grid;
-          grid-template-columns: repeat(4,1fr);
-          gap: 16px;
-        }
-
-        .stat {
-          background: white;
-          border: 1px solid #e8eaf1;
-          border-radius: 16px;
-          padding: 20px;
-          box-shadow: 0 5px 20px rgba(26,32,54,.035);
-        }
-
-        .statTop {
-          color: #858c9d;
-          font-size: 13px;
-          font-weight: 650;
-        }
-
-        .statValue {
-          margin-top: 10px;
-          color: #171b3a;
-          font-size: 26px;
-          font-weight: 800;
-        }
-
-        .grid2 {
-          display: grid;
-          grid-template-columns: 1.4fr 1fr;
-          gap: 18px;
-          margin-top: 20px;
-        }
-
-        .panel {
-          background: white;
-          border: 1px solid #e8eaf1;
-          border-radius: 16px;
-          padding: 22px;
-          box-shadow: 0 5px 20px rgba(26,32,54,.035);
-        }
-
-        .panelHeader {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 12px;
-          margin-bottom: 18px;
-        }
-
-        .empty {
-          min-height: 180px;
-          display: grid;
-          place-items: center;
-          text-align: center;
-          color: #858c9d;
-        }
-
-        .emptyIcon {
-          width: 48px;
-          height: 48px;
-          border-radius: 14px;
-          display: grid;
-          place-items: center;
-          background: #f0eeff;
-          color: #6252ee;
-          margin: 0 auto 12px;
-          font-size: 22px;
-        }
-
-        .formGrid {
-          display: grid;
-          gap: 18px;
-        }
-
-        .field label {
-          display: block;
-          font-size: 13px;
-          font-weight: 700;
-          color: #454b5d;
-          margin-bottom: 8px;
-        }
-
-        .field input,
-        .field select {
           width: 100%;
-          padding: 13px 14px;
-          border: 1px solid #dfe2eb;
-          border-radius: 10px;
-          outline: none;
-          background: white;
-          color: #22283a;
-        }
-
-        .field input:focus,
-        .field select:focus {
-          border-color: #6b5bf2;
-          box-shadow: 0 0 0 3px rgba(107,91,242,.1);
-        }
-
-        .serviceGrid {
-          display: grid;
-          grid-template-columns: repeat(3,1fr);
-          gap: 10px;
-        }
-
-        .serviceButton {
-          border: 1px solid #e1e4ed;
-          background: white;
-          border-radius: 11px;
-          padding: 14px;
-          text-align: left;
-          color: #51586a;
-          font-weight: 650;
-        }
-
-        .serviceButton:hover {
-          border-color: #897df5;
-        }
-
-        .serviceButton.selected {
-          border-color: #6252ee;
-          background: #f1efff;
-          color: #5646dc;
-        }
-
-        .info {
-          background: #f3f1ff;
-          border: 1px solid #e3dfff;
-          border-radius: 12px;
-          padding: 14px;
-          color: #5147a4;
-          line-height: 1.5;
-          font-size: 13px;
-        }
-
-        .categoryGrid {
-          display: grid;
-          grid-template-columns: repeat(4,1fr);
-          gap: 15px;
-        }
-
-        .category {
-          border: 1px solid #e7e9f0;
-          background: white;
-          border-radius: 15px;
-          padding: 20px;
-          text-align: left;
-          transition: .2s;
-        }
-
-        .category:hover {
-          transform: translateY(-2px);
-          border-color: #cfc9ff;
-          box-shadow: 0 10px 28px rgba(50,45,100,.08);
-        }
-
-        .categoryIcon {
-          width: 42px;
-          height: 42px;
-          display: grid;
-          place-items: center;
-          border-radius: 12px;
-          background: #f0eeff;
-          color: #5b4df5;
-          margin-bottom: 14px;
-        }
-
-        .categoryTitle {
-          font-weight: 750;
-          color: #242a3c;
-        }
-
-        .categoryText {
-          color: #858c9d;
-          font-size: 13px;
-          line-height: 1.5;
-          margin-top: 6px;
+          max-width: 1250px;
+          margin: 0 auto;
+          padding: 34px;
         }
 
         .hero {
-          background:
-            radial-gradient(circle at 85% 20%,rgba(133,112,255,.25),transparent 32%),
-            linear-gradient(135deg,#171b3d,#30246b);
-          border-radius: 22px;
-          padding: 45px;
-          color: white;
-          margin-bottom: 25px;
-          overflow: hidden;
-          position: relative;
+          background: linear-gradient(135deg, #ffffff, #f2f0ff);
+          border: 1px solid #e7e5f7;
+          border-radius: 24px;
+          padding: 38px;
+          margin-bottom: 24px;
         }
 
-        .hero h1 {
-          color: white;
-          max-width: 650px;
-          font-size: clamp(34px,6vw,58px);
+        .eyebrow {
+          color: #5b4df5;
+          font-size: 13px;
+          font-weight: 850;
+          margin-bottom: 10px;
+        }
+
+        h1 {
+          font-size: clamp(32px, 5vw, 52px);
+          line-height: 1.05;
+          letter-spacing: -2px;
+          margin: 0;
         }
 
         .hero p {
-          color: rgba(255,255,255,.78);
-          max-width: 620px;
+          color: #69708a;
+          max-width: 650px;
           line-height: 1.7;
+          margin: 16px 0 24px;
           font-size: 16px;
         }
 
-        .heroActions {
-          display: flex;
-          gap: 12px;
-          margin-top: 24px;
-          flex-wrap: wrap;
-        }
-
-        .heroPrimary {
-          border: 0;
-          background: white;
-          color: #4e40cf;
-          padding: 13px 19px;
-          border-radius: 11px;
-          font-weight: 800;
-        }
-
-        .heroSecondary {
-          border: 1px solid rgba(255,255,255,.25);
-          background: rgba(255,255,255,.08);
-          color: white;
-          padding: 13px 19px;
-          border-radius: 11px;
+        .trust {
+          margin-top: 15px;
+          color: #50586f;
+          font-size: 13px;
           font-weight: 700;
         }
 
-        .demo {
-          display: inline-flex;
-          padding: 6px 10px;
-          border-radius: 999px;
-          background: rgba(255,255,255,.13);
-          color: #ddd9ff;
-          font-size: 11px;
-          font-weight: 800;
-          letter-spacing: .06em;
+        .stats {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 16px;
+          margin-bottom: 24px;
+        }
+
+        .card {
+          background: white;
+          border: 1px solid #e8eaf2;
+          border-radius: 18px;
+          padding: 22px;
+          box-shadow: 0 8px 28px rgba(26, 31, 67, 0.045);
+        }
+
+        .stat-label {
+          color: #777e94;
+          font-size: 13px;
+          font-weight: 650;
+        }
+
+        .stat-value {
+          margin-top: 8px;
+          font-size: 27px;
+          font-weight: 850;
+          letter-spacing: -0.7px;
+        }
+
+        .section-title {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 15px;
+          margin-bottom: 14px;
+        }
+
+        .section-title h2 {
+          margin: 0;
+          font-size: 21px;
+        }
+
+        .muted {
+          color: #747b91;
+          line-height: 1.6;
+        }
+
+        .empty {
+          text-align: center;
+          padding: 45px 20px;
+        }
+
+        .empty-icon {
+          width: 52px;
+          height: 52px;
+          margin: 0 auto 14px;
+          border-radius: 15px;
+          background: #f0eeff;
+          display: grid;
+          place-items: center;
+          color: #5b4df5;
+          font-size: 23px;
+          font-weight: 900;
+        }
+
+        .grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 18px;
+        }
+
+        .form-card {
+          background: white;
+          border: 1px solid #e8eaf2;
+          border-radius: 20px;
+          padding: 24px;
+        }
+
+        label {
+          display: block;
+          color: #555d75;
+          font-size: 13px;
+          font-weight: 750;
+          margin-bottom: 8px;
+        }
+
+        select,
+        input {
+          width: 100%;
+          border: 1px solid #dfe2ec;
+          border-radius: 11px;
+          padding: 13px;
+          background: white;
+          color: #171b3a;
+          outline: none;
+        }
+
+        select:focus,
+        input:focus {
+          border-color: #5b4df5;
+          box-shadow: 0 0 0 3px rgba(91, 77, 245, 0.1);
+        }
+
+        .field {
           margin-bottom: 18px;
         }
 
-        .table {
-          width: 100%;
-          border-collapse: collapse;
+        .price-box {
+          background: #f6f5ff;
+          border: 1px solid #e4e1ff;
+          border-radius: 15px;
+          padding: 18px;
+          margin-top: 20px;
         }
 
-        .table th,
-        .table td {
-          padding: 14px 10px;
-          border-bottom: 1px solid #eef0f5;
-          text-align: left;
-          font-size: 13px;
-        }
-
-        .table th {
-          color: #858c9d;
-          font-weight: 700;
-        }
-
-        .status {
-          display: inline-flex;
-          padding: 5px 9px;
-          border-radius: 999px;
-          background: #f1f0ff;
+        .price {
+          font-size: 30px;
+          font-weight: 900;
           color: #5b4df5;
-          font-size: 11px;
+        }
+
+        .demo {
+          display: inline-block;
+          background: #fff4cf;
+          color: #896700;
+          border-radius: 999px;
+          padding: 5px 9px;
+          font-size: 10px;
+          font-weight: 900;
+          margin-bottom: 10px;
+        }
+
+        .category-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 14px;
+        }
+
+        .category {
+          background: white;
+          border: 1px solid #e8eaf2;
+          border-radius: 16px;
+          padding: 20px;
           font-weight: 750;
         }
 
-        .mobileToggle {
-          display: none;
-          border: 0;
-          background: #f0eeff;
-          color: #5948e8;
-          border-radius: 9px;
-          padding: 9px 11px;
-          font-size: 18px;
+        .category small {
+          display: block;
+          color: #7b8298;
+          font-weight: 500;
+          margin-top: 7px;
+          line-height: 1.4;
+        }
+
+        .footer {
+          margin-top: 40px;
+          padding: 25px 0;
+          border-top: 1px solid #e5e7ef;
+          color: #777e94;
+          font-size: 13px;
         }
 
         @media (max-width: 900px) {
           .sidebar {
-            position: fixed;
-            left: -260px;
-            top: 72px;
-            bottom: 0;
-            z-index: 40;
-            transition: .2s;
-          }
-
-          .sidebar.open {
-            left: 0;
-          }
-
-          .mobileToggle {
-            display: block;
-          }
-
-          .content {
-            padding: 20px;
-          }
-
-          .cards {
-            grid-template-columns: repeat(2,1fr);
-          }
-
-          .grid2 {
-            grid-template-columns: 1fr;
-          }
-
-          .categoryGrid {
-            grid-template-columns: repeat(2,1fr);
-          }
-
-          .tagline {
             display: none;
+          }
+
+          .stats {
+            grid-template-columns: repeat(2, 1fr);
+          }
+
+          .category-grid {
+            grid-template-columns: repeat(2, 1fr);
           }
         }
 
         @media (max-width: 600px) {
           .topbar {
-            padding: 0 15px;
+            padding: 0 16px;
           }
 
-          .topActions .headerButton {
+          .tagline {
+            display: none;
+          }
+
+          .login {
             display: none;
           }
 
           .content {
-            padding: 15px;
-          }
-
-          .welcome {
-            align-items: flex-start;
-            flex-direction: column;
-          }
-
-          .cards {
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-          }
-
-          .stat {
-            padding: 15px;
-          }
-
-          .statValue {
-            font-size: 21px;
-          }
-
-          .categoryGrid,
-          .serviceGrid {
-            grid-template-columns: 1fr;
+            padding: 18px 14px 35px;
           }
 
           .hero {
-            padding: 28px 22px;
-            border-radius: 17px;
+            padding: 25px 20px;
+            border-radius: 19px;
           }
 
-          .hero h1 {
-            font-size: 35px;
+          h1 {
+            letter-spacing: -1.2px;
           }
 
-          .table {
-            min-width: 600px;
+          .stats,
+          .grid,
+          .category-grid {
+            grid-template-columns: 1fr;
           }
 
-          .tableWrap {
-            overflow-x: auto;
+          .card,
+          .form-card {
+            padding: 18px;
           }
         }
       `}</style>
 
       <header className="topbar">
-        <div className="brand">
-          <button
-            className="mobileToggle"
-            onClick={() => setMobileMenu(!mobileMenu)}
-          >
-            ☰
-          </button>
-
-          <div className="brandMark">P</div>
-          PROMVANTA
+        <div>
+          <div className="brand">
+            PROM<span>VANTA</span>
+          </div>
+          <div className="tagline">Legitimate promotion, real tracking</div>
         </div>
 
-        <div className="topActions">
-          <button className="headerButton" onClick={() => go("support")}>
-            Support
-          </button>
+        <div className="top-actions">
+          <Link className="login" href="/login">
+            Sign in
+          </Link>
 
-          <button
-            className="primaryButton"
-            onClick={() => go("create")}
-          >
-            Create Campaign
-          </button>
+          <Link href="/signup">
+            <button className="primary">Create Account</button>
+          </Link>
         </div>
       </header>
 
       <div className="layout">
-        <aside className={`sidebar ${mobileMenu ? "open" : ""}`}>
-          <div className="sideLabel">Workspace</div>
+        <aside className="sidebar">
+          <div className="side-label">PROMVANTA</div>
 
-          <button
-            className={`navButton ${section === "home" ? "active" : ""}`}
-            onClick={() => go("home")}
-          >
-            ◉ Home
-          </button>
-
-          <button
-            className={`navButton ${section === "campaigns" ? "active" : ""}`}
-            onClick={() => go("campaigns")}
-          >
-            ◫ My Campaigns
-          </button>
-
-          <button
-            className={`navButton ${section === "create" ? "active" : ""}`}
-            onClick={() => go("create")}
-          >
-            ＋ Create Campaign
-          </button>
-
-          <button
-            className={`navButton ${section === "wallet" ? "active" : ""}`}
-            onClick={() => go("wallet")}
-          >
-            ◈ Wallet
-          </button>
-
-          <button
-            className={`navButton ${section === "results" ? "active" : ""}`}
-            onClick={() => go("results")}
-          >
-            ◒ Results
-          </button>
-
-          <button
-            className={`navButton ${section === "transactions" ? "active" : ""}`}
-            onClick={() => go("transactions")}
-          >
-            ⇄ Transactions
-          </button>
-
-          <div className="sideLabel">Benefits</div>
-
-          <button
-            className={`navButton ${section === "rewards" ? "active" : ""}`}
-            onClick={() => go("rewards")}
-          >
-            ✦ Rewards
-          </button>
-
-          <button
-            className={`navButton ${section === "invite" ? "active" : ""}`}
-            onClick={() => go("invite")}
-          >
-            ♧ Invite & Earn
-          </button>
-
-          <div className="sideLabel">Account</div>
-
-          <button
-            className={`navButton ${section === "support" ? "active" : ""}`}
-            onClick={() => go("support")}
-          >
-            ? Support
-          </button>
-
-          <button
-            className={`navButton ${section === "profile" ? "active" : ""}`}
-            onClick={() => go("profile")}
-          >
-            ◯ Profile & Settings
-          </button>
+          <nav className="nav">
+            {navItems.map(([name, href]) => (
+              <button
+                key={name}
+                className={section === name ? "active" : ""}
+                onClick={() => {
+                  setSection(name);
+                  if (name === "Home") displaySection("home");
+                }}
+              >
+                {name}
+              </button>
+            ))}
+          </nav>
         </aside>
 
         <section className="content">
-          <div className="page">
-
-            {section === "home" && (
-              <>
-                <div className="welcome">
-                  <div>
-                    <div className="eyebrow">
-                      Legitimate promotion, real tracking
-                    </div>
-
-                    <h1>Welcome back 👋</h1>
-
-                    <div className="subtext">
-                      Promote smarter. Reach further.
-                    </div>
-                  </div>
-
-                  <button
-                    className="primaryButton"
-                    onClick={() => go("create")}
-                  >
-                    Create Campaign
-                  </button>
+          {section === "home" && (
+            <>
+              <div className="hero">
+                <div className="eyebrow">
+                  LEGITIMATE DIGITAL PROMOTION
                 </div>
 
-                <div className="cards">
-                  <div className="stat">
-                    <div className="statTop">Wallet Balance</div>
-                    <div className="statValue">₦0.00</div>
-                  </div>
+                <h1>Promote smarter. Reach further.</h1>
 
-                  <div className="stat">
-                    <div className="statTop">Active Campaigns</div>
-                    <div className="statValue">0</div>
-                  </div>
+                <p>
+                  Launch legitimate digital promotion campaigns, manage your
+                  budget and track real campaign results from one simple
+                  platform.
+                </p>
 
-                  <div className="stat">
-                    <div className="statTop">Total Spend</div>
-                    <div className="statValue">₦0.00</div>
-                  </div>
+                <Link href="/create-campaign">
+                  <button className="primary">Create a Campaign</button>
+                </Link>
 
-                  <div className="stat">
-                    <div className="statTop">Completed Campaigns</div>
-                    <div className="statValue">0</div>
-                  </div>
+                <div className="trust">
+                  ✓ No fake engagement. No bots. Real campaigns only.
+                </div>
+              </div>
+
+              <div className="stats">
+                <div className="card">
+                  <div className="stat-label">Wallet Balance</div>
+                  <div className="stat-value">₦0.00</div>
                 </div>
 
-                <div className
+                <div className="card">
+                  <div className="stat-label">Active Campaigns</div>
+                  <div className="stat-value">0</div>
+                </div>
+
+                <div className="card">
+                  <div className="stat-label">Total Spend</div>
+                  <div className="stat-value">₦0.00</div>
+                </div>
+
+                <div className="card">
+                  <div className="stat-label">Completed Campaigns</div>
+                  <div className="stat-value">0</div>
+                </div>
+              </div>
+
+              <div className="card">
+                <div className="section-title">
+                  <h2>Campaign Performance</h2>
+                </div>
+
+                <div className="empty">
+                  <div className="empty-icon">↗</div>
+                  <h3>No campaign data yet</h3>
+                  <p className="muted">
+                    Your real campaign performance will appear here after a
+                    campaign has been created and provider data is available.
+                  </p>
+                </div>
+              </div>
+
+              <div style={{ marginTop: 24 }}>
+                <div className="section-title">
+                  <h2>Campaign Categories</h2>
+                </div>
+
+                <div className="category-grid">
+                  <div className="category">
+                    Social Media
+                    <small>Promote eligible social content and audiences.</small>
+                  </div>
+
+                  <div className="category">
+                    Video Promotion
+                    <small>Promote videos with legitimate advertising.</small>
+                  </div>
+
+                  <div className="category">
+                    Music Promotion
+                    <small>Increase discovery and legitimate reach.</small>
+                  </div>
+
+                  <div className="category">
+                    Website Promotion
+                    <small>Drive visitors to eligible websites.</small>
+                  </div>
+
+                  <div className="category">
+                    Product Promotion
+                    <small>Promote products and campaigns.</small>
+                  </div>
+
+                  <div className="category">
+                    Business Promotion
+                    <small>Build awareness and reach for businesses.</small>
+                  </div>
+
+                  <div className="category">
+                    App Promotion
+                    <small>Promote eligible apps and landing pages.</small>
+                  </div>
+
+                  <div className="category">
+                    Creator Promotion
+                    <small>Grow legitimate creator campaigns.</small>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ marginTop: 24 }} className="grid">
+                <div className="card">
+                  <h2>Transparent pricing</h2>
+                  <p className="muted">
+                    Tell PROMVANTA what you need. Pricing is calculated from
+                    configured service rules rather than permanent public
+                    packages.
+                  </p>
+                </div>
+
+                <div className="card">
+                  <h2>Real tracking</h2>
+                  <p className="muted">
+                    Results are shown only when valid fulfillment or provider
+                    data exists. No fabricated statistics.
+                  </p>
+                </div>
+              </div>
+
+              <div style={{ marginTop: 24 }} className="card">
+                <span className="demo">DEMO DATA</span>
+                <h2>Example dashboard</h2>
+                <p className="muted">
+                  Any example figures used for demonstrations are clearly
+                  labeled and are never copied into real customer accounts.
+                </p>
+              </div>
+            </>
+          )}
+
+          {section !== "home" && (
+            <>
+              <div className="hero">
+                <div className="eyebrow">PROMVANTA</div>
+
+                <h1>{section}</h1>
+
+                <p>
+                  This area is part of the PROMVANTA customer experience.
+                  Your real account information will appear here after secure
+                  authentication and database integration are connected.
+                </p>
+
+                <Link
+                  href={
+                    navItems.find((item) => item[0] === section)?.[1] ||
+                    "/dashboard"
+                  }
+                >
+                  <button className="primary">Open {section}</button>
+                </Link>
+              </div>
+
+              {section === "Create Campaign" && (
+                <div className="grid">
+                  <div className="form-card">
+                    <h2>Start a campaign</h2>
+
+                    <div className="field">
+                      <label>Campaign Type</label>
+
+                      <select
+                        value={campaignType}
+                        onChange={(e) => setCampaignType(e.target.value)}
+                      >
+                        {campaignTypes.map((item) => (
+                          <option key={item}>{item}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="field">
+                      <label>Goal / Service</label>
+
+                      <select
+                        value={service}
+                        onChange={(e) => setService(e.target.value)}
+                      >
+                        {services.map((item) => (
+                          <option key={item}>{item}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="field">
+                      <label>Quantity Needed</label>
+
+                      <input
+                        type="number"
+                        min="0"
+                        placeholder="Enter quantity"
+                        value={quantity}
+                        onChange={(e) => setQuantity(e.target.value)}
+                      />
+                    </div>
+
+                    <Link href="/create-campaign">
+                      <button className="primary">
+                        Continue to Campaign Setup
+                      </button>
+                    </Link>
+                  </div>
+
+                  <div className="form-card">
+                    <h2>Important</h2>
+
+                    <p className="muted">
+                      PROMVANTA uses legitimate fulfillment. Available goals,
+                      pricing, minimums, campaign periods and provider
+                      availability will be determined by the configured
+                      system.
+                    </p>
+
+                    <div className="price-box">
+                      <div className="stat-label">Campaign minimum</div>
+                      <div className="price">₦2,500</div>
+                      <div className="muted">
+                        Overall minimum campaign value.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {section !== "Create Campaign" && (
+                <div className="card">
+                  <div className="empty">
+                    <div className="empty-icon">✓</div>
+                    <h3>No data to display yet</h3>
+                    <p className="muted">
+                      New customer accounts begin with genuine zero-state
+                      information. Real records will appear when they exist.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+
+          <footer className="footer">
+            <strong>PROMVANTA</strong> — Legitimate promotion, real tracking.
+            <br />
+            No fake engagement. No bots. Real campaigns only.
+          </footer>
+        </section>
+      </div>
+    </main>
+  );
+  }
