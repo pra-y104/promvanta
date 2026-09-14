@@ -387,3 +387,842 @@ function homepage(){
    <div class="price-card"><h3>Starter</h3><div class="price">₦0</div><small>platform access</small><ul><li>✓ Campaign creation</li><li>✓ Wallet & transactions</li><li>✓ Real campaign tracking</li><li>✓ Email support</li></ul><button class="btn btn-outline" onclick="openAuth('register')">Start free</button></div>
    <div class="price-card featured"><h3>Growth</h3><div class="price">10%</div><small>example platform fee</small><ul><li>✓ Everything in Starter</li><li>✓ Priority campaign review</li><li>✓ Referral rewards when enabled</li><li>✓ Advanced analytics</li></ul><button class="btn btn-primary" onclick="openAuth('register')">Choose Growth</button></div>
    <div class="price-card"><h3>Business</h3><div class="price">Custom</div><small>enterprise</small><ul><li>✓ Everything in Growth</li><li>✓ Dedicated support</li><li>✓ Custom campaign configurati
+   "price">Custom</div><small>enterprise</small><ul><li>✓ Everything in Growth</li><li>✓ Dedicated support</li><li>✓ Custom campaign configuration</li><li>✓ Account support</li></ul><button class="btn btn-outline" onclick="go('support')">Contact sales</button></div>
+  </div>
+  <p style="text-align:center;color:#999;font-size:11px;margin-top:20px">Example pricing only — final fees are configurable by administrators.</p>
+ </div>
+</section>
+
+<section>
+ <div class="container">
+  <div class="section-head"><h2>Built on trust and transparency</h2></div>
+  <div class="cards">
+   <div class="card"><div class="icon">₦</div><h3>Transparent pricing</h3><p>Know the applicable amount before you pay.</p></div>
+   <div class="card"><div class="icon">✓</div><h3>Secure payments</h3><p>Payment verification is designed to happen before campaigns activate.</p></div>
+   <div class="card"><div class="icon">⌁</div><h3>Real tracking</h3><p>Results are displayed only when valid provider data is available.</p></div>
+   <div class="card"><div class="icon">★</div><h3>Legitimate services</h3><p>No bots, fake engagement or fabricated results.</p></div>
+  </div>
+ </div>
+</section>
+
+<section id="faq" style="background:white">
+ <div class="container">
+  <div class="section-head"><h2>Frequently asked questions</h2></div>
+  <div class="faq">
+
+   <div class="faq-item" onclick="this.classList.toggle('open')">
+    <div class="faq-q">Is PROMVANTA a legitimate platform? <span>+</span></div>
+    <div class="faq-a">PROMVANTA is designed around legitimate advertising and provider-backed fulfillment. It does not present bots or fake engagement as a service.</div>
+   </div>
+
+   <div class="faq-item" onclick="this.classList.toggle('open')">
+    <div class="faq-q">Where do campaign results come from? <span>+</span></div>
+    <div class="faq-a">Results should come from connected legitimate advertising or fulfillment providers. If provider data is unavailable, PROMVANTA should show that data is still awaited rather than inventing statistics.</div>
+   </div>
+
+   <div class="faq-item" onclick="this.classList.toggle('open')">
+    <div class="faq-q">How are campaigns reviewed? <span>+</span></div>
+    <div class="faq-a">Campaigns can pass through a review and processing stage before legitimate provider fulfillment begins.</div>
+   </div>
+
+   <div class="faq-item" onclick="this.classList.toggle('open')">
+    <div class="faq-q">How does pricing work? <span>+</span></div>
+    <div class="faq-a">For measurable services, you provide the quantity and PROMVANTA calculates the price. For budget-based campaigns, you provide a campaign budget and receive an estimate rather than a guaranteed outcome.</div>
+   </div>
+
+   <div class="faq-item" onclick="this.classList.toggle('open')">
+    <div class="faq-q">Can I get a refund? <span>+</span></div>
+    <div class="faq-a">Refund eligibility depends on the campaign, payment status and configured refund policy. Support can review the case.</div>
+   </div>
+
+   <div class="faq-item" onclick="this.classList.toggle('open')">
+    <div class="faq-q">Which payment methods are supported? <span>+</span></div>
+    <div class="faq-a">Available payment methods depend on the payment provider configured for the live application.</div>
+   </div>
+
+  </div>
+ </div>
+</section>
+
+<section>
+ <div class="container">
+  <div class="cta">
+   <h2>Ready to launch your first campaign?</h2>
+   <p>Create your account, choose your goal and let PROMVANTA calculate the appropriate campaign price.</p>
+   <button class="btn btn-primary" onclick="openAuth('register')">Create Your Campaign →</button>
+  </div>
+ </div>
+</section>
+
+<footer>
+ <div class="container footer-grid">
+  <div>
+   <div class="footer-title">PROMVANTA</div>
+   <p style="font-size:13px;line-height:1.7">Create, manage and track legitimate digital promotion campaigns from one powerful platform.</p>
+   <strong style="color:white;font-size:13px">Promote smarter. Reach further.</strong>
+  </div>
+
+  <div>
+   <div class="footer-title">Platform</div>
+   <div class="footer-links">
+    <a href="#how">How It Works</a>
+    <a href="#campaigns">Campaigns</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#faq">FAQ</a>
+   </div>
+  </div>
+
+  <div>
+   <div class="footer-title">Company</div>
+   <div class="footer-links">
+    <a href="#" onclick="go('support')">Support</a>
+    <a href="#">Contact</a>
+    <a href="#">Legal</a>
+    <a href="#">Terms of Service</a>
+    <a href="#">Privacy Policy</a>
+    <a href="#">Refund Policy</a>
+   </div>
+  </div>
+ </div>
+
+ <div class="container footer-bottom">
+  © 2026 PROMVANTA. All rights reserved. · No fake engagement. No bots. Real campaigns only.
+ </div>
+</footer>
+
+<script>
+const state={
+ screen:"home",
+ user:null,
+ authMode:"login",
+ campaignStep:1,
+ campaign:{
+  type:"",
+  platform:"",
+  link:"",
+  service:"",
+  quantity:"",
+  budget:""
+ },
+ campaigns:[],
+ transactions:[],
+ wallet:0,
+ tickets:[],
+ referralCode:"",
+ sidebar:false
+};
+
+const services={
+ "Social Media Promotion":{
+  platforms:["Instagram","TikTok","Facebook","X"],
+  goals:["Followers","Reach","Likes","Comments","Shares","Engagement","Audience Growth","Content Reach","Video Views"]
+ },
+ "Video Promotion":{
+  platforms:["YouTube","TikTok","Instagram","Facebook"],
+  goals:["Video Views","Reach","Engagement","Audience Growth","Subscribers","Followers","Likes","Comments","Shares"]
+ },
+ "Music Promotion":{
+  platforms:["YouTube","TikTok","Instagram","Music Destinations"],
+  goals:["Music Discovery","Music/Content Reach","Video Views","Audience Growth","Followers","Subscribers","Engagement"]
+ },
+ "Website Promotion":{
+  platforms:["Website"],
+  goals:["Website Visits","Landing-Page Traffic","Brand Awareness","Leads / Sign-ups","Sales / Conversions"]
+ },
+ "Product Promotion":{
+  platforms:["Website","Instagram","Facebook","TikTok","YouTube"],
+  goals:["Reach","Brand Awareness","Website Visits","Leads","Sales / Conversions","Engagement"]
+ },
+ "Business Promotion":{
+  platforms:["Website","Instagram","Facebook","TikTok","YouTube"],
+  goals:["Brand Awareness","Reach","Website Visits","Leads","Local Promotion","Sales / Conversions"]
+ },
+ "App Promotion":{
+  platforms:["App Landing Page","Website"],
+  goals:["App Visits","App Installs","Sign-ups","Engagement","Brand Awareness","Conversions"]
+ },
+ "Creator Promotion":{
+  platforms:["YouTube","TikTok","Instagram","Facebook"],
+  goals:["Followers","Subscribers","Video Views","Reach","Engagement","Audience Growth","Content Reach"]
+ }
+};
+
+const quantityGoals=[
+ "Followers","Subscribers","Likes","Comments","Shares",
+ "Video Views","Website Visits","App Visits"
+];
+
+function money(n){
+ return "₦"+Number(n||0).toLocaleString("en-NG",{
+  minimumFractionDigits:2,
+  maximumFractionDigits:2
+ });
+}
+
+function toast(msg){
+ const el=document.getElementById("toast");
+ if(!el)return;
+ el.textContent=msg;
+ el.classList.remove("hidden");
+ clearTimeout(window.toastTimer);
+ window.toastTimer=setTimeout(()=>{
+  el.classList.add("hidden");
+ },2800);
+}
+
+function save(){
+ try{
+  localStorage.setItem("promvanta_state",JSON.stringify({
+   user:state.user,
+   campaigns:state.campaigns,
+   transactions:state.transactions,
+   wallet:state.wallet,
+   tickets:state.tickets,
+   referralCode:state.referralCode
+  }));
+ }catch(e){}
+}
+
+function load(){
+ try{
+  const x=JSON.parse(localStorage.getItem("promvanta_state"));
+  if(x){
+   state.user=x.user||null;
+   state.campaigns=x.campaigns||[];
+   state.transactions=x.transactions||[];
+   state.wallet=x.wallet||0;
+   state.tickets=x.tickets||[];
+   state.referralCode=x.referralCode||"";
+  }
+ }catch(e){}
+}
+
+function go(screen){
+ state.screen=screen;
+ state.sidebar=false;
+ window.scrollTo(0,0);
+ render();
+}
+
+function logo(){
+ return '<div class="logo">PROMV<span>ANTA</span></div>';
+}
+
+function openAuth(mode){
+ state.authMode=mode;
+ state.screen="auth";
+ render();
+}
+
+function authPage(){
+ const register=state.authMode==="register";
+
+ return `
+ <div class="auth-wrap">
+  <div class="auth-card">
+   ${logo()}
+
+   <h1>${register?"Create your PROMVANTA account":"Welcome back"}</h1>
+
+   <p>
+    ${register
+     ?"Start creating legitimate digital promotion campaigns."
+     :"Sign in to manage your campaigns and track results."
+    }
+   </p>
+
+   ${register?`
+    <div class="field">
+     <label>Full name</label>
+     <input id="authName" placeholder="Your name">
+    </div>
+   `:""}
+
+   <div class="field">
+    <label>Email address</label>
+    <input id="authEmail" type="email" placeholder="you@example.com">
+   </div>
+
+   <div class="field">
+    <label>Password</label>
+    <input id="authPass" type="password" placeholder="••••••••">
+   </div>
+
+   ${register
+    ?`<div class="help">By creating an account, you agree to use PROMVANTA only for legitimate promotion.</div>`
+    :`<div style="text-align:right">
+       <button class="btn btn-light" onclick="forgot()">Forgot password?</button>
+      </div>`
+   }
+
+   <div class="auth-actions">
+    <button class="btn btn-primary" onclick="submitAuth()">
+     ${register?"Create Account":"Sign In"}
+    </button>
+
+    <button class="btn btn-outline" onclick="go('home')">
+     Back to Home
+    </button>
+   </div>
+
+   <p style="text-align:center;margin-top:22px">
+    ${register?"Already have an account?":"Don't have an account?"}
+    <button
+     style="border:0;background:none;color:var(--primary);font-weight:800"
+     onclick="state.authMode='${register?"login":"register"}';render()">
+     ${register?"Sign in":"Create account"}
+    </button>
+   </p>
+  </div>
+ </div>`;
+}
+
+function submitAuth(){
+ const email=document.getElementById("authEmail").value.trim();
+ const pass=document.getElementById("authPass").value;
+
+ if(!email||!pass){
+  toast("Please complete the required fields.");
+  return;
+ }
+
+ if(state.authMode==="register"){
+  const name=document.getElementById("authName").value.trim();
+
+  if(!name){
+   toast("Please enter your name.");
+   return;
+  }
+
+  state.user={name,email};
+  state.referralCode=
+   "PV-"+Math.random().toString(36).slice(2,10).toUpperCase();
+
+  state.wallet=0;
+  state.campaigns=[];
+  state.transactions=[];
+  state.tickets=[];
+
+  save();
+  toast("Account created successfully.");
+ }else{
+  if(!state.user){
+   state.user={
+    name:email.split("@")[0],
+    email
+   };
+
+   state.referralCode=
+    "PV-"+Math.random().toString(36).slice(2,10).toUpperCase();
+
+   save();
+  }
+
+  toast("Signed in successfully.");
+ }
+
+ go("dashboard");
+}
+
+function forgot(){
+ const email=prompt("Enter the email address for your password reset:");
+
+ if(email){
+  toast("Password reset request recorded.");
+ }
+}
+
+function sidebar(){
+ const items=[
+  ["dashboard","⌂","Home"],
+  ["campaigns","◈","My Campaigns"],
+  ["create","＋","Create Campaign"],
+  ["wallet","₦","Wallet"],
+  ["results","⌁","Results"],
+  ["transactions","▤","Transactions"],
+  ["rewards","★","Rewards"],
+  ["referral","↗","Invite & Earn"],
+  ["support","?","Support"],
+  ["profile","◯","Profile & Settings"]
+ ];
+
+ return `
+ <aside class="sidebar ${state.sidebar?"open":""}">
+  <div class="side-logo">${logo()}</div>
+
+  <div class="side-nav">
+   ${items.map(x=>`
+    <button
+     class="side-btn ${state.screen===x[0]?"active":""}"
+     onclick="go('${x[0]}')">
+     ${x[1]} &nbsp; ${x[2]}
+    </button>
+   `).join("")}
+  </div>
+
+  <div class="side-bottom">
+   <button class="side-btn" onclick="logout()">
+    ⇥ &nbsp; Sign Out
+   </button>
+  </div>
+ </aside>`;
+}
+
+function appShell(content){
+ return `
+ <div class="app-shell">
+  ${sidebar()}
+
+  <main class="main">
+   <header class="app-top">
+    <button
+     class="mobile-menu"
+     onclick="state.sidebar=!state.sidebar;render()">
+     ☰
+    </button>
+
+    <div style="font-size:13px;color:var(--muted)">
+     Legitimate promotion, real tracking
+    </div>
+
+    <div class="userbox">
+     <span style="font-size:12px;color:#777">
+      ${state.user?.name||"Customer"}
+     </span>
+
+     <div class="avatar">
+      ${(state.user?.name||"C")[0].toUpperCase()}
+     </div>
+    </div>
+   </header>
+
+   ${content}
+  </main>
+ </div>`;
+}
+
+function dashboard(){
+ const active=state.campaigns.filter(x=>
+  ["Paid","Under Review","Approved","Queued","Active","Tracking","Delayed"]
+  .includes(x.status)
+ ).length;
+
+ const completed=state.campaigns.filter(
+  x=>x.status==="Completed"
+ ).length;
+
+ const spend=state.transactions
+  .filter(x=>x.type==="Campaign")
+  .reduce((a,b)=>a+b.amount,0);
+
+ return appShell(`
+ <div class="page">
+
+  <div class="page-title">
+   <div>
+    <h1>Welcome back, ${state.user?.name||"Customer"} 👋</h1>
+    <p>Manage your promotion and track campaign performance.</p>
+   </div>
+
+   <button class="btn btn-primary" onclick="go('create')">
+    ＋ Create Campaign
+   </button>
+  </div>
+
+  <div class="stats">
+   <div class="app-stat">
+    <div class="label">Wallet Balance</div>
+    <div class="value">${money(state.wallet)}</div>
+   </div>
+
+   <div class="app-stat">
+    <div class="label">Active Campaigns</div>
+    <div class="value">${active}</div>
+   </div>
+
+   <div class="app-stat">
+    <div class="label">Total Spend</div>
+    <div class="value">${money(spend)}</div>
+   </div>
+
+   <div class="app-stat">
+    <div class="label">Completed Campaigns</div>
+    <div class="value">${completed}</div>
+   </div>
+  </div>
+
+  <div class="app-grid">
+   <div>
+    <div class="panel">
+     <div class="panel-head">
+      <h3>Campaign performance</h3>
+      <span class="demo-label">REAL ACCOUNT DATA</span>
+     </div>
+
+     ${state.campaigns.length
+      ?campaignTable()
+      :`
+       <div class="empty">
+        <div class="empty-icon">⌁</div>
+        <h3>No campaigns yet</h3>
+        <p>Create your first campaign to start tracking real results.</p>
+        <button class="btn btn-primary" onclick="go('create')">
+         Create Campaign
+        </button>
+       </div>
+      `
+     }
+    </div>
+   </div>
+
+   <div>
+    <div class="panel">
+     <div class="panel-head">
+      <h3>Quick actions</h3>
+     </div>
+
+     <button
+      class="btn btn-primary"
+      style="width:100%;margin-bottom:10px"
+      onclick="go('create')">
+      Create Campaign
+     </button>
+
+     <button
+      class="btn btn-light"
+      style="width:100%;margin-bottom:10px"
+      onclick="go('wallet')">
+      View Wallet
+     </button>
+
+     <button
+      class="btn btn-light"
+      style="width:100%"
+      onclick="go('support')">
+      Get Support
+     </button>
+    </div>
+
+    <div class="panel">
+     <h3 style="margin-top:0">Trust promise</h3>
+     <p style="color:var(--muted);font-size:13px;line-height:1.6">
+      No fake engagement. No bots. Campaign results are shown only when
+      valid provider data is available.
+     </p>
+    </div>
+   </div>
+  </div>
+ </div>`);
+}
+
+function campaignTable(){
+ return `
+ <table class="table">
+  <thead>
+   <tr>
+    <th>Campaign</th>
+    <th>Goal</th>
+    <th>Status</th>
+    <th>Amount</th>
+   </tr>
+  </thead>
+
+  <tbody>
+   ${state.campaigns.map(x=>`
+    <tr>
+     <td>
+      <strong>${x.type}</strong><br>
+      <small>${x.platform}</small>
+     </td>
+
+     <td>${x.service}</td>
+
+     <td>
+      <span class="status ${
+       x.status==="Completed"
+       ?"green"
+       :x.status==="Delayed"
+       ?"orange"
+       :"gray"
+      }">
+       ${x.status}
+      </span>
+     </td>
+
+     <td>${money(x.amount)}</td>
+    </tr>
+   `).join("")}
+  </tbody>
+ </table>`;
+}
+
+function campaignsPage(){
+ return appShell(`
+ <div class="page">
+  <div class="page-title">
+   <div>
+    <h1>My Campaigns</h1>
+    <p>View every campaign associated with your account.</p>
+   </div>
+
+   <button class="btn btn-primary" onclick="go('create')">
+    ＋ Create Campaign
+   </button>
+  </div>
+
+  <div class="panel">
+   ${state.campaigns.length
+    ?campaignTable()
+    :`
+     <div class="empty">
+      <div class="empty-icon">◈</div>
+      <h3>No campaigns</h3>
+      <p>Your campaigns will appear here after you create one.</p>
+      <button class="btn btn-primary" onclick="go('create')">
+       Create Campaign
+      </button>
+     </div>
+    `
+   }
+  </div>
+ </div>`);
+}
+
+function createPage(){
+ const c=state.campaign;
+ const types=Object.keys(services);
+ const platforms=c.type?services[c.type].platforms:[];
+ const goals=c.type?services[c.type].goals:[];
+ const quantity=quantityGoals.includes(c.service);
+
+ let price=0;
+
+ if(quantity){
+  price=Number(c.quantity||0)*10;
+ }else{
+  price=Number(c.budget||0);
+ }
+
+ return appShell(`
+ <div class="page">
+
+  <div class="page-title">
+   <div>
+    <h1>Create Campaign</h1>
+    <p>Tell PROMVANTA what you want to achieve.</p>
+   </div>
+  </div>
+
+  <div class="stepper">
+   ${["Campaign","Destination","Goal","Price","Review"].map((x,i)=>`
+    <span class="step-pill ${state.campaignStep===i+1?"active":""}">
+     ${i+1}. ${x}
+    </span>
+   `).join("")}
+  </div>
+
+  <div class="panel">
+
+   ${state.campaignStep===1?`
+    <h3>1. Choose a campaign type</h3>
+    <p class="help">Select the type that best describes what you want to promote.</p>
+
+    <div class="form-grid" style="margin-top:20px">
+     <div class="field full">
+      <label>Campaign Type</label>
+      <select
+       id="ctype"
+       onchange="
+        state.campaign.type=this.value;
+        state.campaign.platform='';
+        state.campaign.service='';
+        render()
+       ">
+       <option value="">Select campaign type</option>
+       ${types.map(t=>`
+        <option ${c.type===t?"selected":""}>${t}</option>
+       `).join("")}
+      </select>
+     </div>
+    </div>
+
+   `:state.campaignStep===2?`
+
+    <h3>2. Promotion destination</h3>
+
+    <div class="form-grid" style="margin-top:20px">
+
+     <div class="field">
+      <label>Platform / Destination</label>
+      <select id="cplatform">
+       <option value="">Select destination</option>
+       ${platforms.map(p=>`
+        <option ${c.platform===p?"selected":""}>${p}</option>
+       `).join("")}
+      </select>
+     </div>
+
+     <div class="field">
+      <label>Public promotion link</label>
+      <input
+       id="clink"
+       value="${c.link}"
+       placeholder="https://...">
+     </div>
+
+     <div class="field full">
+      <div class="notice">
+       Only public destinations that can be legitimately promoted should be submitted.
+      </div>
+     </div>
+
+    </div>
+
+   `:state.campaignStep===3?`
+
+    <h3>3. What do you want to achieve?</h3>
+    <p class="help">Only services applicable to your selected campaign are shown.</p>
+
+    <div class="form-grid" style="margin-top:20px">
+
+     <div class="field full">
+      <label>Goal / Service</label>
+      <select id="cservice" onchange="state.campaign.service=this.value;render()">
+       <option value="">Select one goal</option>
+       ${goals.map(g=>`
+        <option ${c.service===g?"selected":""}>${g}</option>
+       `).join("")}
+      </select>
+     </div>
+
+     ${c.service
+      ?quantity
+       ?`
+        <div class="field full">
+         <label>Quantity Needed</label>
+         <input
+          id="qty"
+          type="number"
+          min="1"
+          value="${c.quantity}"
+          placeholder="Enter quantity">
+        </div>
+
+        <div class="field full">
+         <div class="notice">
+          PROMVANTA calculates the campaign price from the configured
+          service/provider rate.
+         </div>
+        </div>
+       `
+       :`
+        <div class="field full">
+         <label>Campaign Budget</label>
+         <input
+          id="budget"
+          type="number"
+          min="2500"
+          value="${c.budget}"
+          placeholder="Enter campaign budget">
+        </div>
+
+        <div class="field full">
+         <div class="notice">
+          Budget-based campaigns use estimates rather than guaranteed results.
+         </div>
+        </div>
+       `
+      :""
+     }
+    </div>
+
+   `:state.campaignStep===4?`
+
+    <h3>4. Calculated price</h3>
+
+    <div class="price-box">
+     <div class="price-line">
+      <span>Campaign goal</span>
+      <strong>${c.service||"—"}</strong>
+     </div>
+
+     <div class="price-line">
+      <span>${quantity?"Quantity":"Campaign budget"}</span>
+      <strong>${quantity?(c.
+      rate||0)*quantity:budget}</strong>
+     </div>
+
+     <div class="price-line">
+      <span>Estimated campaign period</span>
+      <strong>${c.duration||"Based on provider configuration"}</strong>
+     </div>
+
+     <div class="price-line total-line">
+      <span>Total</span>
+      <strong>₦${formatMoney(total)}</strong>
+     </div>
+    </div>
+
+    ${total<2500?`
+     <div class="alert warning">
+      Minimum campaign value is ₦2,500. Please increase your requested quantity or adjust your campaign selection to continue.
+     </div>
+    `:""}
+
+    <div class="step-actions">
+     <button class="btn btn-secondary" onclick="prevCampaignStep()">Back</button>
+     <button class="btn btn-primary" onclick="goToReview()" ${total<2500?"disabled":""}>
+      Continue to Review
+     </button>
+    </div>
+
+   `
+        :state.campaignStep===5?`
+    <h3>5. Review campaign</h3>
+
+    <div class="review-box">
+     <div class="price-line">
+      <span>Campaign</span>
+      <strong>${c.type||"—"}</strong>
+     </div>
+
+     <div class="price-line">
+      <span>Platform</span>
+      <strong>${c.platform||"—"}</strong>
+     </div>
+
+     <div class="price-line">
+      <span>Goal</span>
+      <strong>${c.service||"—"}</strong>
+     </div>
+
+     <div class="price-line">
+      <span>Destination</span>
+      <strong>${c.link||"—"}</strong>
+     </div>
+
+     <div class="price-line">
+      <span>${quantity?"Quantity":"Campaign budget"}</span>
+      <strong>${quantity?quantity:"₦"+formatMoney(budget)}</strong>
+     </div>
+
+     <div class="price-line total-line">
+      <span>Total</span>
+      <strong>₦${formatMoney(total)}</strong>
+     </div>
+    </div>
+
+    <div class="notice">
+     Your campaign will only be activated after payment is successfully verified.
+     Provider results will appear only when real provider data is available.
+    </div>
+
+    <div class="step-actions">
+     <button class="btn btn-secondary" onclick="prevCampaignStep()">Back</button>
+     <button class="btn btn-primary" onclick="openPayment()">Pay Now</button>
+    </div>
+   `
+        :`
+    <h3>Campaign creation</h3>
+    <p class="muted">Complete the steps above to continue.</p>
+   `
