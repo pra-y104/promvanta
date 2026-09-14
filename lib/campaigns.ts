@@ -7,9 +7,9 @@ export const campaignTypes = [
   "Business Promotion",
   "App Promotion",
   "Creator Promotion",
-];
+] as const;
 
-export const servicesByCampaignType: Record<string, string[]> = {
+export const campaignServices: Record<string, string[]> = {
   "Social Media Promotion": [
     "Followers",
     "Reach",
@@ -26,22 +26,21 @@ export const servicesByCampaignType: Record<string, string[]> = {
     "Video Views",
     "Reach",
     "Engagement",
-    "Audience Growth",
     "Subscribers",
     "Likes",
     "Comments",
     "Shares",
+    "Audience Growth",
   ],
 
   "Music Promotion": [
     "Music Discovery",
-    "Music/Content Reach",
+    "Music Reach",
     "Video Views",
     "Audience Growth",
     "Followers",
     "Subscribers",
     "Engagement",
-    "Streaming Promotion",
   ],
 
   "Website Promotion": [
@@ -89,7 +88,3 @@ export const servicesByCampaignType: Record<string, string[]> = {
     "Content Reach",
   ],
 };
-
-export function getServicesForCampaignType(campaignType: string) {
-  return servicesByCampaignType[campaignType] ?? [];
-}
