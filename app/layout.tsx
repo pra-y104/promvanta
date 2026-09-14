@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "PROMVANTA — Legitimate Promotion, Real Tracking",
+  title: "PROMVANTA — Legitimate promotion, real tracking",
   description:
-    "Promote smarter. Reach further. Launch legitimate digital promotion campaigns and track real campaign results.",
+    "Launch legitimate digital promotion campaigns, manage your budget and track real campaign results.",
 };
 
 export default function RootLayout({
