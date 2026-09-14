@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import styles from "./create-campaign.module.css";
+import { useMemo, useState } from "react";
+import Link from "next/link";
 
 const campaignTypes = [
   "Social Media Promotion",
@@ -26,7 +25,7 @@ const platforms = [
   "Music Platform",
 ];
 
-const servicesByType: Record<string, string[]> = {
+const services: Record<string, string[]> = {
   "Social Media Promotion": [
     "Followers",
     "Reach",
@@ -99,7 +98,7 @@ const servicesByType: Record<string, string[]> = {
   ],
 };
 
-const budgetServices = [
+const budgetServices = new Set([
   "Reach",
   "Brand Awareness",
   "Website Visits",
@@ -107,273 +106,515 @@ const budgetServices = [
   "Leads",
   "Leads / Sign-ups",
   "Sales / Conversions",
-  "Conversions",
   "Local Promotion",
-  "Music Discovery",
-  "Music Reach",
-];
+  "Conversions",
+  "App Visits",
+  "App Installs",
+]);
 
 export default function CreateCampaignPage() {
-  const router = useRouter();
-
-  const [campaignType, setCampaignType] = useState("");
+  const [type, setType] = useState("");
   const [platform, setPlatform] = useState("");
   const [destination, setDestination] = useState("");
   const [service, setService] = useState("");
   const [quantity, setQuantity] = useState("");
   const [budget, setBudget] = useState("");
 
-  const services = campaignType
-    ? servicesByType[campaignType] ?? []
-    : [];
+  const availableServices = useMemo(
+    () => (type ? services[type] ?? [] : []),
+    [type]
+  );
 
-  const isBudgetBased = budgetServices.includes(service);
+  const isBudgetBased = budgetServices.has(service);
 
-  const canContinue =
-    Boolean(campaignType) &&
-    Boolean(destination) &&
+  const numericQuantity = Number(quantity) || 0;
+  const numericBudget = Number(budget) || 0;
+
+  const calculatedAmount = isBudgetBased
+    ? numericBudget
+    : numericQuantity;
+
+  const minimumCampaignValue = 2500;
+
+  const meetsMinimum =
+    calculatedAmount >= minimumCampaignValue;
+
+  const ready =
+    Boolean(type) &&
+    Boolean(platform) &&
+    Boolean(destination.trim()) &&
     Boolean(service) &&
-    (isBudgetBased
-      ? Number(budget) > 0
-      : Number(quantity) > 0);
+    calculatedAmount > 0 &&
+    meetsMinimum;
 
-  function continueToReview() {
-    if (!canContinue) return;
-
-    const campaign = {
-      campaignType,
-      platform,
-      destination,
-      service,
-      mode: isBudgetBased ? "budget" : "quantity",
-      quantity: isBudgetBased ? null : Number(quantity),
-      budget: isBudgetBased ? Number(budget) : null,
-    };
-
-    sessionStorage.setItem(
-      "promvanta_campaign",
-      JSON.stringify(campaign)
-    );
-
-    router.push("/review-campaign");
-  }
+  const resetAfterTypeChange = (value: string) => {
+    setType(value);
+    setService("");
+    setQuantity("");
+    setBudget("");
+  };
 
   return (
-    <main className={styles.page}>
-      <div className={styles.container}>
-        <header className={styles.header}>
-          <p className={styles.eyebrow}>PROMVANTA</p>
+    <main className="page">
+      <style jsx>{`
+        .page {
+          min-height: 100vh;
+          background: #f7f8fc;
+          color: #171b3a;
+          font-family:
+            Inter,
+            ui-sans-serif,
+            system-ui,
+            -apple-system,
+            BlinkMacSystemFont,
+            "Segoe UI",
+            sans-serif;
+          padding: 28px 18px 60px;
+        }
 
-          <h1>Create Campaign</h1>
+        .container {
+          max-width: 980px;
+          margin: 0 auto;
+        }
 
-          <p className={styles.subtitle}>
-            Tell us what you want to promote and what you want
-            to achieve. PROMVANTA will calculate the appropriate
-            campaign price.
-          </p>
-        </header>
+        .back {
+          display: inline-block;
+          color: #5b4df5;
+          font-weight: 700;
+          text-decoration: none;
+          margin-bottom: 25px;
+        }
 
-        <section className={styles.card}>
-          <div className={styles.step}>
-            <span>1</span>
+        .heading {
+          margin-bottom: 24px;
+        }
 
-            <div>
-              <h2>Campaign Type</h2>
-              <p>What are you promoting?</p>
-            </div>
+        .eyebrow {
+          color: #6556e8;
+          font-size: 13px;
+          font-weight: 800;
+          margin-bottom: 7px;
+        }
+
+        h1 {
+          margin: 0;
+          font-size: clamp(29px, 5vw, 42px);
+          letter-spacing: -.9px;
+        }
+
+        .subtitle {
+          color: #747c8e;
+          line-height: 1.6;
+          margin-top: 9px;
+        }
+
+        .card {
+          background: #fff;
+          border: 1px solid #e7e9f0;
+          border-radius: 18px;
+          padding: 24px;
+          box-shadow: 0 6px 25px rgba(30, 35, 60, .035);
+        }
+
+        .steps {
+          display: grid;
+          grid-template-columns: repeat(5, 1fr);
+          gap: 8px;
+          margin-bottom: 24px;
+        }
+
+        .step {
+          background: #f0eeff;
+          color: #6252ee;
+          border-radius: 9px;
+          padding: 9px;
+          text-align: center;
+          font-size: 11px;
+          font-weight: 750;
+        }
+
+        .field {
+          margin-bottom: 20px;
+        }
+
+        label {
+          display: block;
+          color: #454b5d;
+          font-size: 13px;
+          font-weight: 750;
+          margin-bottom: 8px;
+        }
+
+        select,
+        input {
+          width: 100%;
+          min-height: 47px;
+          padding: 12px 14px;
+          border: 1px solid #dfe2eb;
+          border-radius: 11px;
+          background: #fff;
+          color: #22283a;
+          outline: none;
+        }
+
+        select:focus,
+        input:focus {
+          border-color: #6556e8;
+          box-shadow: 0 0 0 3px rgba(101, 86, 232, .1);
+        }
+
+        .services {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 10px;
+        }
+
+        .service {
+          border: 1px solid #e1e4ed;
+          background: #fff;
+          border-radius: 11px;
+          padding: 14px;
+          color: #51586a;
+          font-weight: 650;
+          text-align: left;
+        }
+
+        .service:hover {
+          border-color: #9186f5;
+        }
+
+        .service.selected {
+          border-color: #6252ee;
+          background: #f0eeff;
+          color: #5545d9;
+        }
+
+        .notice {
+          background: #f3f1ff;
+          border: 1px solid #e3dfff;
+          color: #5147a4;
+          padding: 14px;
+          border-radius: 11px;
+          font-size: 13px;
+          line-height: 1.55;
+          margin-bottom: 20px;
+        }
+
+        .price {
+          border: 1px solid #e5e7ef;
+          border-radius: 13px;
+          padding: 18px;
+          margin: 20px 0;
+          background: #fbfbfd;
+        }
+
+        .priceLabel {
+          color: #858c9d;
+          font-size: 13px;
+        }
+
+        .priceValue {
+          font-size: 29px;
+          font-weight: 850;
+          margin-top: 5px;
+        }
+
+        .minimumError {
+          margin-top: 10px;
+          color: #b42318;
+          font-size: 13px;
+          font-weight: 650;
+        }
+
+        .actions {
+          display: flex;
+          justify-content: space-between;
+          gap: 12px;
+          margin-top: 25px;
+        }
+
+        .secondary,
+        .primary {
+          min-height: 47px;
+          border-radius: 11px;
+          padding: 0 18px;
+          font-weight: 750;
+        }
+
+        .secondary {
+          border: 1px solid #dfe2eb;
+          background: #fff;
+          color: #555d70;
+        }
+
+        .primary {
+          border: 0;
+          background: #5b4df5;
+          color: white;
+        }
+
+        .primary:disabled {
+          opacity: .45;
+          cursor: not-allowed;
+        }
+
+        @media (max-width: 700px) {
+          .steps {
+            grid-template-columns: repeat(2, 1fr);
+          }
+
+          .services {
+            grid-template-columns: 1fr;
+          }
+
+          .card {
+            padding: 18px;
+          }
+
+          .actions {
+            flex-direction: column-reverse;
+          }
+
+          .secondary,
+          .primary {
+            width: 100%;
+          }
+        }
+      `}</style>
+
+      <div className="container">
+        <Link href="/dashboard" className="back">
+          ← Back to Dashboard
+        </Link>
+
+        <div className="heading">
+          <div className="eyebrow">
+            Legitimate promotion, real tracking
           </div>
 
-          <div className={styles.options}>
-            {campaignTypes.map((item) => (
-              <button
-                key={item}
-                type="button"
-                className={
-                  campaignType === item
-                    ? `${styles.option} ${styles.selected}`
-                    : styles.option
-                }
-                onClick={() => {
-                  setCampaignType(item);
-                  setService("");
-                }}
-              >
-                {item}
-              </button>
-            ))}
+          <h1>Create a Campaign</h1>
+
+          <div className="subtitle">
+            Tell PROMVANTA what you want to achieve. We calculate the
+            applicable campaign price before payment.
           </div>
-        </section>
+        </div>
 
-        {campaignType && (
-          <section className={styles.card}>
-            <div className={styles.step}>
-              <span>2</span>
+        <div className="steps">
+          <div className="step">1. What</div>
+          <div className="step">2. Where</div>
+          <div className="step">3. Goal</div>
+          <div className="step">4. Amount</div>
+          <div className="step">5. Review</div>
+        </div>
 
-              <div>
-                <h2>Platform / Destination</h2>
-                <p>
-                  Select where your promotion will happen.
-                </p>
-              </div>
-            </div>
+        <div className="card">
+          <div className="field">
+            <label>Campaign Type</label>
 
-            <div className={styles.options}>
-              {platforms.map((item) => (
-                <button
-                  key={item}
-                  type="button"
-                  className={
-                    platform === item
-                      ? `${styles.option} ${styles.selected}`
-                      : styles.option
-                  }
-                  onClick={() => setPlatform(item)}
-                >
+            <select
+              value={type}
+              onChange={(event) =>
+                resetAfterTypeChange(event.target.value)
+              }
+            >
+              <option value="">Select campaign type</option>
+
+              {campaignTypes.map((item) => (
+                <option key={item} value={item}>
                   {item}
-                </button>
+                </option>
               ))}
-            </div>
-          </section>
-        )}
+            </select>
+          </div>
 
-        {campaignType && (
-          <section className={styles.card}>
-            <div className={styles.step}>
-              <span>3</span>
+          <div className="field">
+            <label>Platform / Destination</label>
 
-              <div>
-                <h2>Promotion Link</h2>
-                <p>
-                  Enter the public link or destination you want
-                  to promote.
-                </p>
-              </div>
-            </div>
+            <select
+              value={platform}
+              onChange={(event) =>
+                setPlatform(event.target.value)
+              }
+            >
+              <option value="">Select platform</option>
+
+              {platforms.map((item) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="field">
+            <label>Promotion Link / Destination</label>
 
             <input
-              className={styles.input}
               type="url"
-              placeholder="https://example.com/your-content"
               value={destination}
               onChange={(event) =>
                 setDestination(event.target.value)
               }
+              placeholder="https://..."
             />
-          </section>
-        )}
+          </div>
 
-        {campaignType && destination && (
-          <section className={styles.card}>
-            <div className={styles.step}>
-              <span>4</span>
+          {type && (
+            <div className="field">
+              <label>Select ONE Goal / Service</label>
 
-              <div>
-                <h2>Choose Your Goal</h2>
-                <p>Select one specific promotion goal.</p>
+              <div className="services">
+                {availableServices.map((item) => (
+                  <button
+                    type="button"
+                    key={item}
+                    className={`service ${
+                      service === item ? "selected" : ""
+                    }`}
+                    onClick={() => {
+                      setService(item);
+                      setQuantity("");
+                      setBudget("");
+                    }}
+                  >
+                    {item}
+                  </button>
+                ))}
               </div>
             </div>
+          )}
 
-            <div className={styles.options}>
-              {services.map((item) => (
-                <button
-                  key={item}
-                  type="button"
-                  className={
-                    service === item
-                      ? `${styles.option} ${styles.selected}`
-                      : styles.option
-                  }
-                  onClick={() => setService(item)}
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {service && (
-          <section className={styles.card}>
-            <div className={styles.step}>
-              <span>5</span>
-
-              <div>
-                <h2>
-                  {isBudgetBased
-                    ? "Campaign Budget"
-                    : "Quantity Needed"}
-                </h2>
-
-                <p>
-                  {isBudgetBased
-                    ? "Set the amount you want to invest in this campaign."
-                    : "Tell PROMVANTA how much promotion you need."}
-                </p>
+          {service && (
+            <>
+              <div className="notice">
+                {isBudgetBased ? (
+                  <>
+                    This service uses a <strong>Campaign Budget</strong>.
+                    Delivery is estimated from the configured legitimate
+                    provider campaign and is not guaranteed.
+                  </>
+                ) : (
+                  <>
+                    This service uses <strong>Quantity Needed</strong>.
+                    PROMVANTA calculates the price from the configured
+                    service rate.
+                  </>
+                )}
               </div>
-            </div>
 
-            {isBudgetBased ? (
-              <div className={styles.inputGroup}>
-                <label>Campaign Budget</label>
-
-                <div className={styles.amountInput}>
-                  <span>₦</span>
+              {isBudgetBased ? (
+                <div className="field">
+                  <label>Campaign Budget</label>
 
                   <input
                     type="number"
-                    min="2500"
-                    placeholder="2500"
+                    min="0"
                     value={budget}
                     onChange={(event) =>
                       setBudget(event.target.value)
                     }
+                    placeholder="Enter campaign budget"
                   />
                 </div>
+              ) : (
+                <div className="field">
+                  <label>Quantity Needed</label>
 
-                <small>
-                  Minimum campaign value: ₦2,500
-                </small>
+                  <input
+                    type="number"
+                    min="0"
+                    value={quantity}
+                    onChange={(event) =>
+                      setQuantity(event.target.value)
+                    }
+                    placeholder="Enter quantity needed"
+                  />
+                </div>
+              )}
+
+              {calculatedAmount > 0 && (
+                <div className="price">
+                  <div className="priceLabel">
+                    {isBudgetBased
+                      ? "Campaign Budget"
+                      : "Calculated Service Amount"}
+                  </div>
+
+                  <div className="priceValue">
+                    ₦
+                    {calculatedAmount.toLocaleString(
+                      "en-NG",
+                      {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }
+                    )}
+                  </div>
+
+                  <div className="priceLabel">
+                    Minimum campaign value: ₦2,500
+                  </div>
+
+                  {!meetsMinimum && (
+                    <div className="minimumError">
+                      Minimum campaign value is ₦2,500. Please
+                      increase your requested quantity or adjust
+                      your campaign selection to continue.
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <div className="notice">
+                Estimated campaign period will come from the
+                configured fulfillment service. PROMVANTA does not
+                promise an exact completion date.
               </div>
-            ) : (
-              <div className={styles.inputGroup}>
-                <label>Quantity Needed</label>
 
-                <input
-                  className={styles.input}
-                  type="number"
-                  min="1"
-                  placeholder="Enter quantity"
-                  value={quantity}
-                  onChange={(event) =>
-                    setQuantity(event.target.value)
-                  }
-                />
+              <div className="actions">
+                <Link href="/dashboard">
+                  <button type="button" className="secondary">
+                    Cancel
+                  </button>
+                </Link>
 
-                <small>
-                  PROMVANTA will calculate the price from the
-                  configured service rate.
-                </small>
+                <button
+                  type="button"
+                  className="primary"
+                  disabled={!ready}
+                  onClick={() => {
+                    sessionStorage.setItem(
+                      "promvanta_campaign",
+                      JSON.stringify({
+                        campaignType: type,
+                        platform,
+                        destination,
+                        service,
+                        mode: isBudgetBased
+                          ? "budget"
+                          : "quantity",
+                        quantity: isBudgetBased
+                          ? null
+                          : numericQuantity,
+                        budget: isBudgetBased
+                          ? numericBudget
+                          : null,
+                        calculatedAmount,
+                      })
+                    );
+
+                    window.location.href =
+                      "/review-campaign";
+                  }}
+                >
+                  Review Campaign
+                </button>
               </div>
-            )}
-          </section>
-        )}
-
-        {canContinue && (
-          <section className={styles.continueSection}>
-            <button
-              type="button"
-              className={styles.continueButton}
-              onClick={continueToReview}
-            >
-              Continue to Review →
-            </button>
-
-            <p>
-              Your final price will be shown before payment.
-            </p>
-          </section>
-        )}
+            </>
+          )}
+        </div>
       </div>
     </main>
   );
-  }
+    }
