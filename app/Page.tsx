@@ -661,4 +661,26 @@ function CreateCampaign({ go }: { go: (s: Screen) => void }) {
 
             const amount = isQuantity
               ? Number(quantity || 0)
-              : Number(budget |
+              : Number(budget || 0);
+                        if (amount < 1) {
+              alert("Please enter the requested quantity or campaign budget.");
+              return;
+            }
+
+            if (!isQuantity && amount < 2500) {
+              alert(
+                "Minimum campaign value is ₦2,500. Please increase your campaign budget."
+              );
+              return;
+            }
+
+            go("campaigns");
+          }}
+        >
+          Continue to Review →
+        </button>
+      </div>
+    </div>
+  );
+}
+            
