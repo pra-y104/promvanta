@@ -1226,3 +1226,266 @@ function createPage(){
     <h3>Campaign creation</h3>
     <p class="muted">Complete the steps above to continue.</p>
    `
+     `;
+
+function render(){
+ const root=document.getElementById("root");
+
+ if(state.screen==="home"){
+  root.innerHTML=homepage();
+  return;
+ }
+
+ if(state.screen==="auth"){
+  root.innerHTML=authPage();
+  return;
+ }
+
+ if(state.screen==="app"){
+  root.innerHTML=appPage();
+  return;
+ }
+
+ root.innerHTML=homepage();
+}
+
+function openAuth(mode){
+ state.authMode=mode;
+ state.screen="auth";
+ render();
+}
+
+function authPage(){
+ return `
+ <div class="auth-wrap">
+  <div class="auth-card">
+   ${logo()}
+   <h1>${state.authMode==="login"?"Welcome back":"Create your PROMVANTA account"}</h1>
+   <p>${state.authMode==="login"?"Sign in to manage your campaigns and track results.":"Create an account to launch and manage legitimate promotion campaigns."}</p>
+
+   <div class="field">
+    <label>Email</label>
+    <input id="authEmail" type="email" placeholder="you@example.com">
+   </div>
+
+   <div class="field">
+    <label>Password</label>
+    <input id="authPassword" type="password" placeholder="••••••••">
+   </div>
+
+   ${state.authMode==="register"?`
+   <div class="field">
+    <label>Your name</label>
+    <input id="authName" type="text" placeholder="Your name">
+   </div>`:""}
+
+   <div class="auth-actions">
+    <button class="btn btn-primary" onclick="submitAuth()">
+     ${state.authMode==="login"?"Sign In":"Create Account"}
+    </button>
+
+    ${state.authMode==="login"?`
+    <button class="btn btn-light" onclick="toast('Password recovery requires the production authentication backend.')">
+     Forgot password?
+    </button>`:""}
+
+    <button class="btn btn-outline" onclick="openAuth('${state.authMode==="login"?"register":"login"}')">
+     ${state.authMode==="login"?"Create an account":"I already have an account"}
+    </button>
+
+    <button class="btn btn-light" onclick="go('home')">Back to homepage</button>
+   </div>
+
+   <p style="margin-top:20px;font-size:11px">
+    Production authentication, sessions and password recovery must be handled server-side.
+   </p>
+  </div>
+ </div>`;
+}
+
+function submitAuth(){
+ const email=(document.getElementById("authEmail")||{}).value?.trim();
+ const password=(document.getElementById("authPassword")||{}).value||"";
+
+ if(!email||!password){
+  toast("Please enter your email and password.");
+  return;
+ }
+
+ if(state.authMode==="register"){
+  const name=(document.getElementById("authName")||{}).value?.trim()||"Customer";
+
+  state.user={
+   name,
+   email
+  };
+
+  if(!state.referralCode){
+   state.referralCode="PV-"+Math.random().toString(36).slice(2,10).toUpperCase();
+  }
+
+  save();
+  state.screen="app";
+  render();
+  toast("Account created successfully.");
+  return;
+ }
+
+ state.user={
+  name:email.split("@")[0],
+  email
+ };
+
+ save();
+ state.screen="app";
+ render();
+ toast("Signed in successfully.");
+}
+
+function logout(){
+ state.user=null;
+ save();
+ state.screen="home";
+ render();
+ toast("You have been signed out.");
+}
+
+function appPage(){
+ return `
+ <div class="app-shell">
+  <aside class="sidebar ${state.sidebar?"open":""}">
+   <div class="side-logo">${logo()}</div>
+
+   <div class="side-nav">
+    ${[
+     ["dashboard","Home"],
+     ["campaigns","Campaigns"],
+     ["create","Create Campaign"],
+     ["wallet","Wallet"],
+     ["results","Results"],
+     ["transactions","Transactions"],
+     ["rewards","Rewards"],
+     ["referral","Invite & Earn"],
+     ["support","Support"],
+     ["profile","Profile & Settings"]
+    ].map(x=>`
+     <button class="side-btn ${state.screen===x[0]?"active":""}" onclick="go('${x[0]}')">
+      ${x[1]}
+     </button>`).join("")}
+   </div>
+
+   <div class="side-bottom">
+    <button class="side-btn" onclick="logout()">Sign Out</button>
+   </div>
+  </aside>
+
+  <main class="main">
+   <header class="app-top">
+    <button class="mobile-menu" onclick="state.sidebar=!state.sidebar;render()">☰</button>
+    <div>
+     <strong>PROMVANTA</strong>
+    </div>
+    <div class="userbox">
+     <div class="avatar">${(state.user?.name||"P").charAt(0).toUpperCase()}</div>
+     <span>${state.user?.name||"Customer"}</span>
+    </div>
+   </header>
+
+   ${appContent()}
+  </main>
+ </div>`;
+}
+
+function appContent(){
+ if(state.screen==="create") return createCampaignPage();
+ if(state.screen==="campaigns") return simplePage("Campaigns","Manage your promotion campaigns.");
+ if(state.screen==="wallet") return simplePage("Wallet",money(state.wallet));
+ if(state.screen==="results") return simplePage("Results","Real provider results will appear here when available.");
+ if(state.screen==="transactions") return simplePage("Transactions","Your verified payment transactions will appear here.");
+ if(state.screen==="rewards") return simplePage("Rewards","Rewards are available only when enabled by PROMVANTA.");
+ if(state.screen==="referral") return referralPage();
+ if(state.screen==="support") return simplePage("Support","Create a support request when you need assistance.");
+ if(state.screen==="profile") return simplePage("Profile & Settings",state.user?.email||"");
+ return dashboardPage();
+}
+
+function dashboardPage(){
+ return `
+ <div class="page">
+  <div class="page-title">
+   <div>
+    <h1>Welcome back, ${state.user?.name||"Customer"} 👋</h1>
+    <p>Legitimate promotion, real tracking</p>
+   </div>
+   <button class="btn btn-primary" onclick="go('create')">Create Campaign</button>
+  </div>
+
+  <div class="stats">
+   <div class="app-stat"><div class="label">Wallet Balance</div><div class="value">${money(state.wallet)}</div></div>
+   <div class="app-stat"><div class="label">Active Campaigns</div><div class="value">${state.campaigns.filter(c=>c.status==="Active").length}</div></div>
+   <div class="app-stat"><div class="label">Total Spend</div><div class="value">${money(state.transactions.reduce((a,x)=>a+Number(x.amount||0),0))}</div></div>
+   <div class="app-stat"><div class="label">Completed Campaigns</div><div class="value">${state.campaigns.filter(c=>c.status==="Completed").length}</div></div>
+  </div>
+
+  <div class="panel">
+   <div class="panel-head">
+    <h3>Campaign performance</h3>
+    <span class="demo-label">REAL ACCOUNT</span>
+   </div>
+
+   ${state.campaigns.length?`
+   <div class="empty">
+    Your campaign activity will appear here.
+   </div>
+   `:`
+   <div class="empty">
+    <div class="empty-icon">📊</div>
+    <strong>No campaigns yet</strong>
+    <p>Create your first campaign to get started.</p>
+    <button class="btn btn-primary" onclick="go('create')">Create Campaign</button>
+   </div>`}
+  </div>
+ </div>`;
+}
+
+function simplePage(title,text){
+ return `
+ <div class="page">
+  <div class="page-title">
+   <div><h1>${title}</h1><p>${text}</p></div>
+  </div>
+  <div class="panel">
+   <div class="empty">
+    <div class="empty-icon">◎</div>
+    <strong>No data yet</strong>
+    <p>This area will populate from real account activity.</p>
+   </div>
+  </div>
+ </div>`;
+}
+
+function referralPage(){
+ return `
+ <div class="page">
+  <div class="page-title">
+   <div><h1>Invite & Earn</h1><p>Share your personal referral link.</p></div>
+  </div>
+  <div class="panel">
+   <h3>Your referral code</h3>
+   <p><strong>${state.referralCode||"Not generated"}</strong></p>
+   <button class="btn btn-primary" onclick="copyReferral()">Copy referral link</button>
+  </div>
+ </div>`;
+}
+
+function copyReferral(){
+ const link=location.origin+location.pathname+"?ref="+state.referralCode;
+ navigator.clipboard?.writeText(link);
+ toast("Referral link copied.");
+}
+
+load();
+render();
+</script>
+</body>
+</html>
