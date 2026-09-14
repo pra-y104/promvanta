@@ -2,7 +2,20 @@
 
 import { useState } from "react";
 
-const types = [
+const menu = [
+  ["home", "Home"],
+  ["campaigns", "Campaigns"],
+  ["create", "Create Campaign"],
+  ["wallet", "Wallet"],
+  ["results", "Results"],
+  ["transactions", "Transactions"],
+  ["rewards", "Rewards"],
+  ["invite", "Invite & Earn"],
+  ["support", "Support"],
+  ["profile", "Profile & Settings"],
+];
+
+const campaignTypes = [
   "Social Media Promotion",
   "Video Promotion",
   "Music Promotion",
@@ -86,472 +99,609 @@ const goals: Record<string, string[]> = {
   ],
 };
 
-const quantityGoals = [
-  "Followers",
-  "Subscribers",
-  "Likes",
-  "Comments",
-  "Shares",
-  "Video Views",
-];
-
 export default function Home() {
-  const [page, setPage] = useState("home");
+  const [screen, setScreen] = useState("landing");
   const [type, setType] = useState("");
   const [goal, setGoal] = useState("");
   const [link, setLink] = useState("");
   const [amount, setAmount] = useState("");
+  const [mobileMenu, setMobileMenu] = useState(false);
+
+  const quantityGoals = [
+    "Followers",
+    "Subscribers",
+    "Likes",
+    "Comments",
+    "Shares",
+    "Video Views",
+  ];
 
   const quantityMode = quantityGoals.includes(goal);
-  const value = Number(amount || 0);
-  const price = quantityMode ? value * 10 : value;
+  const number = Number(amount || 0);
+  const price = quantityMode ? number * 10 : number;
 
-  if (page === "create") {
+  const go = (value: string) => {
+    setScreen(value);
+    setMobileMenu(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  if (screen === "landing") {
     return (
-      <main style={styles.page}>
-        <Header setPage={setPage} />
-        <section style={styles.container}>
-          <h1>Create Campaign</h1>
-          <p style={styles.muted}>
-            Tell PROMVANTA what you want to promote and what you want to
-            achieve.
+      <div className="app">
+        <style>{css}</style>
+
+        <header className="landingHeader">
+          <button className="brand" onClick={() => go("landing")}>
+            PROM<span>VANTA</span>
+          </button>
+
+          <nav>
+            <button onClick={() => go("landing")}>Home</button>
+            <button onClick={() => go("dashboard")}>How It Works</button>
+            <button onClick={() => go("dashboard")}>Campaigns</button>
+            <button onClick={() => go("login")}>Sign in</button>
+            <button className="primary" onClick={() => go("create")}>
+              Create a Campaign
+            </button>
+          </nav>
+        </header>
+
+        <section className="hero">
+          <div className="eyebrow">
+            Legitimate promotion, real tracking
+          </div>
+
+          <h1>
+            Promote smarter.
+            <br />
+            Reach further.
+          </h1>
+
+          <p>
+            Launch legitimate digital promotion campaigns, manage your budget
+            and track real campaign results from one simple platform.
           </p>
 
-          <div style={styles.card}>
-            <label>Campaign Type</label>
-            <select
-              value={type}
-              onChange={(e) => {
-                setType(e.target.value);
-                setGoal("");
-              }}
-              style={styles.input}
-            >
-              <option value="">Select campaign type</option>
-              {types.map((x) => (
-                <option key={x}>{x}</option>
-              ))}
-            </select>
+          <div className="heroButtons">
+            <button className="primary big" onClick={() => go("create")}>
+              Create a Campaign
+            </button>
+            <button className="outline big" onClick={() => go("dashboard")}>
+              See How It Works
+            </button>
+          </div>
 
-            {type && (
-              <>
-                <label>Promotion Link / Destination</label>
-                <input
-                  value={link}
-                  onChange={(e) => setLink(e.target.value)}
-                  placeholder="https://..."
-                  style={styles.input}
-                />
+          <div className="trust">
+            ✓ No fake engagement &nbsp; ✓ No bots &nbsp; ✓ Real campaigns only
+          </div>
+        </section>
 
-                <label>Goal / Service</label>
-                <select
-                  value={goal}
-                  onChange={(e) => setGoal(e.target.value)}
-                  style={styles.input}
-                >
-                  <option value="">Select one goal</option>
-                  {goals[type].map((x) => (
-                    <option key={x}>{x}</option>
-                  ))}
-                </select>
-              </>
-            )}
+        <section className="section">
+          <div className="sectionHead">
+            <div>
+              <div className="smallTitle">EXAMPLE DASHBOARD</div>
+              <h2>Campaign performance</h2>
+            </div>
+            <span className="demo">DEMO DATA</span>
+          </div>
 
-            {goal && (
-              <>
-                <label>
-                  {quantityMode ? "Quantity Needed" : "Campaign Budget"}
-                </label>
+          <div className="dashboardPreview">
+            <div className="previewTop">
+              <strong>PROMVANTA</strong>
+              <span>Campaign performance</span>
+            </div>
 
-                <input
-                  type="number"
-                  min="0"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  placeholder={
-                    quantityMode
-                      ? "Enter quantity"
-                      : "Enter campaign budget"
-                  }
-                  style={styles.input}
-                />
+            <div className="stats">
+              <Stat title="Wallet" value="₦48,500" />
+              <Stat title="Active" value="3" />
+              <Stat title="Reach" value="12.4k" />
+              <Stat title="Campaigns" value="8" />
+            </div>
 
-                <div style={styles.notice}>
-                  Minimum campaign value: ₦2,500
+            <div className="chart">
+              <div className="chartHeader">
+                <strong>Campaign reach</strong>
+                <span>DEMO DATA</span>
+              </div>
+
+              <div className="bars">
+                {[35, 48, 42, 66, 57, 82, 70].map((height, i) => (
+                  <div className="barWrap" key={i}>
+                    <div className="bar" style={{ height }} />
+                    <small>
+                      {["Tue", "Wed", "Thu", "Fri", "Sat", "Sun", "Mon"][i]}
+                    </small>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="section">
+          <div className="center">
+            <div className="smallTitle">TRUST & TRANSPARENCY</div>
+            <h2>Built on trust and transparency</h2>
+            <p>
+              Everything you need to launch legitimate digital promotion and
+              understand what is happening with your campaign.
+            </p>
+          </div>
+
+          <div className="featureGrid">
+            {[
+              ["01", "Transparent pricing", "Know the final price before you pay."],
+              ["02", "Secure payments", "Verified payment processing and records."],
+              ["03", "Real campaign tracking", "Results come from connected providers."],
+              ["04", "Legitimate services", "No fake engagement or artificial activity."],
+              ["05", "Customer support", "Get help when you need it."],
+              ["06", "No fake engagement", "Real campaigns only."],
+            ].map(([n, title, text]) => (
+              <div className="feature" key={title}>
+                <div className="featureIcon">{n}</div>
+                <h3>{title}</h3>
+                <p>{text}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="section">
+          <div className="center">
+            <div className="smallTitle">CAMPAIGNS</div>
+            <h2>Promote what matters</h2>
+            <p>
+              Choose the campaign category that matches what you want to
+              promote.
+            </p>
+          </div>
+
+          <div className="categoryGrid">
+            {campaignTypes.map((x, i) => (
+              <div className="category" key={x}>
+                <div className="categoryIcon">{["♪", "▶", "◎", "↗", "◆", "⌂", "▣", "★"][i]}</div>
+                <h3>{x}</h3>
+                <p>Professional promotion with transparent campaign tracking.</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="how">
+          <div className="center">
+            <div className="smallTitle">HOW IT WORKS</div>
+            <h2>Simple from start to finish</h2>
+          </div>
+
+          <div className="steps">
+            {[
+              ["01", "Create your campaign", "Pick a category and add your promotion URL."],
+              ["02", "Choose your goal", "Tell PROMVANTA what you want to achieve."],
+              ["03", "Pay securely", "Review your final amount before payment."],
+              ["04", "Track your campaign", "Watch real results come in."],
+            ].map(([n, title, text]) => (
+              <div className="step" key={n}>
+                <span>{n}</span>
+                <h3>{title}</h3>
+                <p>{text}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="cta">
+          <h2>Ready to launch your first campaign?</h2>
+          <p>Promote smarter. Reach further.</p>
+          <button className="primary big" onClick={() => go("create")}>
+            Create a Campaign
+          </button>
+        </section>
+
+        <footer>
+          <div>
+            <div className="footerBrand">
+              PROM<span>VANTA</span>
+            </div>
+            <p>
+              Create, manage and track legitimate digital promotion campaigns
+              from one powerful platform.
+            </p>
+          </div>
+
+          <div>
+            <strong>Platform</strong>
+            <p>How It Works</p>
+            <p>Campaigns</p>
+            <p>Pricing</p>
+            <p>FAQ</p>
+          </div>
+
+          <div>
+            <strong>Company</strong>
+            <p>About</p>
+            <p>Support</p>
+            <p>Contact</p>
+            <p>Legal</p>
+          </div>
+        </footer>
+
+        <div className="copyright">
+          © 2026 PROMVANTA. All rights reserved.
+          <br />
+          No fake engagement. No bots. Real campaigns only.
+        </div>
+      </div>
+    );
+  }
+
+  if (screen === "create") {
+    return (
+      <AppShell
+        screen={screen}
+        setScreen={go}
+        mobileMenu={mobileMenu}
+        setMobileMenu={setMobileMenu}
+      >
+        <div className="pageTitle">
+          <div>
+            <div className="smallTitle">NEW CAMPAIGN</div>
+            <h1>Create Campaign</h1>
+            <p>Tell PROMVANTA what you want to promote and achieve.</p>
+          </div>
+        </div>
+
+        <div className="formCard">
+          <label>Campaign Type</label>
+          <select
+            value={type}
+            onChange={(e) => {
+              setType(e.target.value);
+              setGoal("");
+            }}
+          >
+            <option value="">Select campaign type</option>
+            {campaignTypes.map((x) => (
+              <option key={x}>{x}</option>
+            ))}
+          </select>
+
+          {type && (
+            <>
+              <label>Promotion Link / Destination</label>
+              <input
+                value={link}
+                onChange={(e) => setLink(e.target.value)}
+                placeholder="https://..."
+              />
+
+              <label>Goal / Service</label>
+              <select
+                value={goal}
+                onChange={(e) => setGoal(e.target.value)}
+              >
+                <option value="">Select one goal</option>
+                {goals[type].map((x) => (
+                  <option key={x}>{x}</option>
+                ))}
+              </select>
+            </>
+          )}
+
+          {goal && (
+            <>
+              <label>
+                {quantityMode ? "Quantity Needed" : "Campaign Budget"}
+              </label>
+
+              <input
+                type="number"
+                min="0"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                placeholder={
+                  quantityMode
+                    ? "Example: 500"
+                    : "Enter campaign budget"
+                }
+              />
+
+              <div className="notice">
+                Minimum campaign value: ₦2,500
+              </div>
+
+              <div className="priceBox">
+                <span>Calculated price</span>
+                <strong>₦{price.toLocaleString()}</strong>
+              </div>
+
+              <button
+                className="primary full"
+                onClick={() => {
+                  if (link && amount && price >= 2500) go("review");
+                }}
+              >
+                Review Campaign
+              </button>
+            </>
+          )}
+        </div>
+      </AppShell>
+    );
+  }
+
+  if (screen === "review") {
+    return (
+      <AppShell
+        screen={screen}
+        setScreen={go}
+        mobileMenu={mobileMenu}
+        setMobileMenu={setMobileMenu}
+      >
+        <div className="pageTitle">
+          <div>
+            <div className="smallTitle">CHECKOUT</div>
+            <h1>Review Campaign</h1>
+          </div>
+        </div>
+
+        <div className="formCard">
+          <Row label="Campaign type" value={type} />
+          <Row label="Goal" value={goal} />
+          <Row label="Destination" value={link} />
+          <Row
+            label={quantityMode ? "Quantity" : "Budget"}
+            value={amount}
+          />
+          <Row label="Total" value={`₦${price.toLocaleString()}`} />
+
+          <div className="notice">
+            Your final amount will be shown before secure payment.
+          </div>
+
+          <button
+            className="primary full"
+            onClick={() =>
+              alert(
+                "Payment provider is not configured yet. No payment was taken."
+              )
+            }
+          >
+            Pay Securely
+          </button>
+
+          <button className="outline full" onClick={() => go("create")}>
+            Edit Campaign
+          </button>
+        </div>
+      </AppShell>
+    );
+  }
+
+  if (screen === "login") {
+    return (
+      <div className="auth">
+        <div className="authCard">
+          <button className="brand" onClick={() => go("landing")}>
+            PROM<span>VANTA</span>
+          </button>
+          <h1>Welcome back</h1>
+          <p>Sign in to your PROMVANTA account.</p>
+
+          <label>Email</label>
+          <input type="email" placeholder="you@example.com" />
+
+          <label>Password</label>
+          <input type="password" placeholder="••••••••" />
+
+          <button className="primary full" onClick={() => go("dashboard")}>
+            Sign In
+          </button>
+
+          <button className="textButton" onClick={() => go("signup")}>
+            Create an account
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (screen === "signup") {
+    return (
+      <div className="auth">
+        <div className="authCard">
+          <button className="brand" onClick={() => go("landing")}>
+            PROM<span>VANTA</span>
+          </button>
+          <h1>Create your account</h1>
+          <p>Start managing legitimate digital promotion campaigns.</p>
+
+          <label>Full Name</label>
+          <input placeholder="Your name" />
+
+          <label>Email</label>
+          <input type="email" placeholder="you@example.com" />
+
+          <label>Password</label>
+          <input type="password" placeholder="Create a password" />
+
+          <button className="primary full" onClick={() => go("dashboard")}>
+            Create Account
+          </button>
+
+          <button className="textButton" onClick={() => go("login")}>
+            Already have an account? Sign in
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <AppShell
+      screen={screen}
+      setScreen={go}
+      mobileMenu={mobileMenu}
+      setMobileMenu={setMobileMenu}
+    >
+      {screen === "dashboard" && (
+        <>
+          <div className="pageTitle dashboardTitle">
+            <div>
+              <div className="smallTitle">OVERVIEW</div>
+              <h1>Welcome back 👋</h1>
+              <p>Here's what's happening with your campaigns.</p>
+            </div>
+            <button className="primary" onClick={() => go("create")}>
+              + Create Campaign
+            </button>
+          </div>
+
+          <div className="stats">
+            <Stat title="Wallet Balance" value="₦0.00" icon="₦" />
+            <Stat title="Active Campaigns" value="0" icon="↗" />
+            <Stat title="Total Spend" value="₦0.00" icon="₦" />
+            <Stat title="Completed Campaigns" value="0" icon="✓" />
+          </div>
+
+          <div className="mainGrid">
+            <div className="panel performance">
+              <div className="panelHead">
+                <div>
+                  <h2>Campaign performance</h2>
+                  <p>Real results from your campaigns</p>
                 </div>
+                <span className="period">Last 7 days</span>
+              </div>
 
-                <div style={styles.total}>
-                  Calculated price: ₦{price.toLocaleString()}
+              <div className="emptyChart">
+                <div className="emptyIcon">↗</div>
+                <h3>No campaign data yet</h3>
+                <p>
+                  Your real provider results will appear here after you launch
+                  a campaign.
+                </p>
+                <button className="primary" onClick={() => go("create")}>
+                  Create your first campaign
+                </button>
+              </div>
+            </div>
+
+            <div className="panel">
+              <div className="panelHead">
+                <div>
+                  <h2>Recent campaigns</h2>
+                  <p>Your latest activity</p>
                 </div>
+                <button className="mini" onClick={() => go("campaigns")}>
+                  View all
+                </button>
+              </div>
 
+              <div className="emptySmall">
+                <div className="emptyIcon">◎</div>
+                <strong>No campaigns yet</strong>
+                <p>Your campaigns will appear here.</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="panel quick">
+            <h2>What would you like to promote?</h2>
+            <p>Start a legitimate campaign in just a few steps.</p>
+
+            <div className="quickGrid">
+              {campaignTypes.slice(0, 4).map((x) => (
                 <button
-                  style={styles.button}
+                  key={x}
                   onClick={() => {
-                    if (!link || !amount || price < 2500) return;
-                    setPage("review");
+                    setType(x);
+                    go("create");
                   }}
                 >
-                  Review Campaign
+                  <span>↗</span>
+                  {x}
                 </button>
-              </>
-            )}
-          </div>
-        </section>
-      </main>
-    );
-  }
-
-  if (page === "review") {
-    return (
-      <main style={styles.page}>
-        <Header setPage={setPage} />
-        <section style={styles.container}>
-          <h1>Review Campaign</h1>
-
-          <div style={styles.card}>
-            <Row name="Campaign Type" value={type} />
-            <Row name="Goal" value={goal} />
-            <Row name="Destination" value={link} />
-            <Row
-              name={quantityMode ? "Quantity" : "Budget"}
-              value={amount}
-            />
-            <Row name="Total" value={`₦${price.toLocaleString()}`} />
-
-            <div style={styles.notice}>
-              Real payment and provider fulfillment will only be activated
-              after the secure backend integrations are configured.
+              ))}
             </div>
-
-            <button
-              style={styles.button}
-              onClick={() =>
-                alert(
-                  "Payment provider is not configured yet. No payment has been taken."
-                )
-              }
-            >
-              Pay Securely
-            </button>
-
-            <button
-              style={styles.secondary}
-              onClick={() => setPage("create")}
-            >
-              Edit Campaign
-            </button>
           </div>
-        </section>
-      </main>
-    );
-  }
+        </>
+      )}
 
-  if (page === "dashboard") {
-    return (
-      <main style={styles.page}>
-        <Header setPage={setPage} />
-        <section style={styles.container}>
-          <h1>Welcome back 👋</h1>
-          <p style={styles.muted}>
-            Legitimate promotion, real tracking.
-          </p>
+      {screen === "campaigns" && (
+        <SimplePage
+          title="Campaigns"
+          text="Your campaigns will appear here."
+          action="Create Campaign"
+          onAction={() => go("create")}
+        />
+      )}
 
-          <div style={styles.grid}>
-            <Stat title="Wallet Balance" value="₦0.00" />
-            <Stat title="Active Campaigns" value="0" />
-            <Stat title="Total Spend" value="₦0.00" />
-            <Stat title="Completed Campaigns" value="0" />
-          </div>
+      {screen === "wallet" && (
+        <SimplePage
+          title="Wallet"
+          text="Your verified wallet balance is currently ₦0.00."
+          action="Create Campaign"
+          onAction={() => go("create")}
+        />
+      )}
 
-          <div style={styles.card}>
-            <h2>Campaign performance</h2>
-            <p style={styles.muted}>
-              No campaign data yet. Real provider results will appear here
-              after a campaign becomes active.
-            </p>
-            <button style={styles.button} onClick={() => setPage("create")}>
-              Create Campaign
-            </button>
-          </div>
-        </section>
-      </main>
-    );
-  }
+      {screen === "results" && (
+        <SimplePage
+          title="Results"
+          text="Awaiting provider data. Real results will appear here when available."
+        />
+      )}
 
-  return (
-    <main style={styles.page}>
-      <Header setPage={setPage} />
+      {screen === "transactions" && (
+        <SimplePage
+          title="Transactions"
+          text="Your verified payment and wallet transactions will appear here."
+        />
+      )}
 
-      <section style={styles.hero}>
-        <div style={styles.badge}>Legitimate promotion, real tracking</div>
+      {screen === "rewards" && (
+        <SimplePage
+          title="Rewards"
+          text="Rewards are controlled by PROMVANTA administrators and appear when enabled."
+        />
+      )}
 
-        <h1 style={styles.heroTitle}>
-          Promote smarter.
-          <br />
-          Reach further.
-        </h1>
+      {screen === "invite" && (
+        <SimplePage
+          title="Invite & Earn"
+          text="Your secure referral information will appear here."
+        />
+      )}
 
-        <p style={styles.heroText}>
-          Launch legitimate digital promotion campaigns, manage your budget
-          and track real campaign results from one simple platform.
-        </p>
+      {screen === "support" && (
+        <SimplePage
+          title="Support"
+          text="Need help? Open a support request and our team can assist."
+        />
+      )}
 
-        <button style={styles.button} onClick={() => setPage("create")}>
-          Create a Campaign
-        </button>
-
-        <button
-          style={styles.secondary}
-          onClick={() => setPage("dashboard")}
-        >
-          See How It Works
-        </button>
-
-        <p style={styles.trust}>
-          No fake engagement. No bots. Real campaigns only.
-        </p>
-      </section>
-
-      <section style={styles.container}>
-        <h2>Campaign performance</h2>
-        <p style={styles.muted}>DEMO DATA — example dashboard</p>
-
-        <div style={styles.grid}>
-          <Stat title="Wallet" value="₦48,500" />
-          <Stat title="Active" value="3" />
-          <Stat title="Reach" value="12.4k" />
-          <Stat title="Campaigns" value="8" />
-        </div>
-
-        <div style={styles.card}>
-          <h2>Built on trust and transparency</h2>
-          <p style={styles.muted}>
-            Transparent pricing • Secure payments • Real campaign tracking •
-            Legitimate services • Customer support
-          </p>
-        </div>
-
-        <h2>Campaign categories</h2>
-
-        <div style={styles.grid}>
-          {types.map((x) => (
-            <div style={styles.card} key={x}>
-              <h3>{x}</h3>
-              <p style={styles.muted}>
-                Choose a relevant promotion goal and campaign requirements.
-              </p>
-            </div>
-          ))}
-        </div>
-
-        <div style={styles.card}>
-          <h2>How PROMVANTA works</h2>
-          <p style={styles.muted}>
-            1. Create your campaign.
-            <br />
-            2. Choose what you want to achieve.
-            <br />
-            3. Review the calculated price.
-            <br />
-            4. Pay securely.
-            <br />
-            5. Track real campaign results.
-          </p>
-        </div>
-      </section>
-
-      <footer style={styles.footer}>
-        <h2>PROMVANTA</h2>
-        <p>
-          Create, manage and track legitimate digital promotion campaigns
-          from one powerful platform.
-        </p>
-        <p>Promote smarter. Reach further.</p>
-        <p>© 2026 PROMVANTA. All rights reserved.</p>
-        <p>No fake engagement. No bots. Real campaigns only.</p>
-      </footer>
-    </main>
+      {screen === "profile" && (
+        <SimplePage
+          title="Profile & Settings"
+          text="Manage your account and security settings."
+        />
+      )}
+    </AppShell>
   );
 }
 
-function Header({
-  setPage,
-}: {
-  setPage: (page: string) => void;
-}) {
+function AppShell({
+  children,
+  screen,
+  setScreen,
+  mobileMenu,
+  setMobileMenu,
+}: any) {
   return (
-    <header style={styles.header}>
-      <button style={styles.logo} onClick={() => setPage("home")}>
-        PROM<span>VANTA</span>
-      </button>
+    <div className="app dashboardApp">
+      <style>{css}</style>
 
-      <nav>
-        <button style={styles.nav} onClick={() => setPage("home")}>
-          Home
-        </button>
-        <button style={styles.nav} onClick={() => setPage("dashboard")}>
-          Dashboard
-        </button>
-        <button style={styles.nav} onClick={() => setPage("create")}>
-          Create Campaign
-        </button>
-      </nav>
-    </header>
-  );
-}
-
-function Row({ name, value }: { name: string; value: string }) {
-  return (
-    <div style={styles.row}>
-      <span>{name}</span>
-      <strong>{value}</strong>
-    </div>
-  );
-}
-
-function Stat({ title, value }: { title: string; value: string }) {
-  return (
-    <div style={styles.card}>
-      <small style={styles.muted}>{title}</small>
-      <h2>{value}</h2>
-    </div>
-  );
-}
-
-const styles: Record<string, React.CSSProperties> = {
-  page: {
-    minHeight: "100vh",
-    background: "#f7f8fc",
-    color: "#171827",
-    fontFamily: "Arial, sans-serif",
-  },
-  header: {
-    height: 70,
-    background: "#fff",
-    borderBottom: "1px solid #e7e7ef",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: "0 6%",
-    position: "sticky",
-    top: 0,
-    zIndex: 5,
-  },
-  logo: {
-    border: 0,
-    background: "none",
-    fontSize: 22,
-    fontWeight: 900,
-    color: "#171827",
-  },
-  hero: {
-    textAlign: "center",
-    padding: "90px 20px 70px",
-    background: "#fff",
-  },
-  heroTitle: {
-    fontSize: "clamp(42px, 8vw, 72px)",
-    lineHeight: 1,
-    letterSpacing: "-3px",
-    margin: "20px auto",
-    maxWidth: 850,
-  },
-  heroText: {
-    maxWidth: 650,
-    margin: "0 auto 28px",
-    color: "#6c6d7b",
-    fontSize: 18,
-    lineHeight: 1.6,
-  },
-  badge: {
-    display: "inline-block",
-    padding: "8px 14px",
-    borderRadius: 30,
-    background: "#efedff",
-    color: "#5548d8",
-    fontWeight: 700,
-  },
-  trust: {
-    fontWeight: 700,
-    color: "#4b4c58",
-    marginTop: 22,
-  },
-  container: {
-    maxWidth: 1100,
-    margin: "auto",
-    padding: "55px 6%",
-  },
-  grid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit,minmax(210px,1fr))",
-    gap: 16,
-    margin: "22px 0 40px",
-  },
-  card: {
-    background: "#fff",
-    border: "1px solid #e6e6ee",
-    borderRadius: 18,
-    padding: 22,
-    marginBottom: 18,
-  },
-  button: {
-    background: "#5b4df5",
-    color: "#fff",
-    border: 0,
-    borderRadius: 10,
-    padding: "13px 20px",
-    fontWeight: 700,
-    margin: "6px",
-  },
-  secondary: {
-    background: "#fff",
-    color: "#5145d8",
-    border: "1px solid #d9d6f7",
-    borderRadius: 10,
-    padding: "12px 20px",
-    fontWeight: 700,
-    margin: "6px",
-  },
-  nav: {
-    background: "none",
-    border: 0,
-    padding: 10,
-    color: "#55576a",
-  },
-  input: {
-    width: "100%",
-    padding: 13,
-    border: "1px solid #dddde7",
-    borderRadius: 10,
-    margin: "8px 0 18px",
-    background: "#fff",
-  },
-  notice: {
-    padding: 14,
-    background: "#fff6df",
-    borderRadius: 10,
-    margin: "18px 0",
-    color: "#735900",
-  },
-  total: {
-    fontSize: 22,
-    fontWeight: 800,
-    margin: "20px 0",
-  },
-  row: {
-    display: "flex",
-    justifyContent: "space-between",
-    gap: 20,
-    padding: "14px 0",
-    borderBottom: "1px solid #eee",
-  },
-  muted: {
-    color: "#6f7180",
-    lineHeight: 1.6,
-  },
-  footer: {
-    background: "#171827",
-    color: "#fff",
-    padding: "50px 6%",
-  },
-};
+      <header className="appHeader">
+        <button className="brand" onClick={() => setScreen("dashboard")}>
+         
