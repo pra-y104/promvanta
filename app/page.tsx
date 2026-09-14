@@ -1,838 +1,567 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 
-const categories = [
-  ["Music Promotion", "Promote music and build legitimate discovery."],
-  ["Video Promotion", "Reach more viewers through legitimate promotion."],
-  ["Website Traffic", "Drive visitors to eligible websites and landing pages."],
-  ["Social Content", "Promote eligible social content and audiences."],
-  ["Product Promotion", "Put your products in front of relevant audiences."],
-  ["Business Promotion", "Build awareness and reach for your business."],
-  ["Brand Awareness", "Increase visibility with legitimate campaigns."],
-  ["Creator Promotion", "Help eligible creators reach new audiences."],
+type Screen =
+  | "home"
+  | "dashboard"
+  | "campaigns"
+  | "create"
+  | "review"
+  | "wallet"
+  | "results"
+  | "transactions"
+  | "rewards"
+  | "invite"
+  | "support"
+  | "profile"
+  | "login"
+  | "signup";
+
+const campaignTypes = [
+  "Social Media Promotion",
+  "Video Promotion",
+  "Music Promotion",
+  "Website Promotion",
+  "Product Promotion",
+  "Business Promotion",
+  "App Promotion",
+  "Creator Promotion",
 ];
 
-const faqs = [
-  [
-    "Is PROMVANTA a legitimate platform?",
-    "Yes. PROMVANTA is designed for legitimate digital promotion and advertising. We do not sell fake followers, bots, fake likes, or artificial campaign results.",
+const services: Record<string, string[]> = {
+  "Social Media Promotion": [
+    "Followers",
+    "Reach",
+    "Likes",
+    "Comments",
+    "Shares",
+    "Engagement",
+    "Audience Growth",
+    "Content Reach",
+    "Video Views",
   ],
-  [
-    "Where do campaign results come from?",
-    "Campaign results come from connected legitimate advertising and fulfillment providers. If provider data is unavailable, PROMVANTA does not invent results.",
+  "Video Promotion": [
+    "Video Views",
+    "Reach",
+    "Engagement",
+    "Audience Growth",
+    "Subscribers",
+    "Likes",
+    "Comments",
+    "Shares",
   ],
-  [
-    "How are campaigns reviewed?",
-    "Campaigns are checked against supported services, destinations, pricing rules, and fulfillment availability before legitimate fulfillment begins.",
+  "Music Promotion": [
+    "Music Discovery",
+    "Music/Content Reach",
+    "Video Views",
+    "Audience Growth",
+    "Followers",
+    "Subscribers",
+    "Engagement",
   ],
-  [
-    "How does pricing work?",
-    "Pricing is calculated dynamically. Quantity-based services use the configured service rate, while campaign-based services can use a customer-selected budget and honest estimated outcomes.",
+  "Website Promotion": [
+    "Website Visits",
+    "Landing-Page Traffic",
+    "Brand Awareness",
+    "Leads / Sign-ups",
+    "Sales / Conversions",
   ],
-  [
-    "Can I get a refund?",
-    "Refund eligibility depends on the payment, campaign, provider, and applicable refund rules. Refunds are handled through the secure transaction system.",
+  "Product Promotion": [
+    "Reach",
+    "Brand Awareness",
+    "Website Visits",
+    "Leads",
+    "Sales / Conversions",
+    "Engagement",
   ],
-  [
-    "Which payment methods are supported?",
-    "Available payment methods depend on the payment provider configured for PROMVANTA.",
+  "Business Promotion": [
+    "Brand Awareness",
+    "Reach",
+    "Website Visits",
+    "Leads",
+    "Local Promotion",
+    "Sales / Conversions",
   ],
+  "App Promotion": [
+    "App Visits",
+    "App Installs",
+    "Sign-ups",
+    "Engagement",
+    "Brand Awareness",
+    "Conversions",
+  ],
+  "Creator Promotion": [
+    "Followers",
+    "Subscribers",
+    "Video Views",
+    "Reach",
+    "Engagement",
+    "Audience Growth",
+    "Content Reach",
+  ],
+};
+
+const platforms = [
+  "YouTube",
+  "TikTok",
+  "Instagram",
+  "Facebook",
+  "X",
+  "Website",
+  "Music Platform",
 ];
 
-export default function HomePage() {
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
+const quantityServices = [
+  "Followers",
+  "Subscribers",
+  "Likes",
+  "Comments",
+  "Shares",
+  "Video Views",
+];
 
-  const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({
-      behavior: "smooth",
-    });
+export default function Home() {
+  const [screen, setScreen] = useState<Screen>("home");
+  const [campaignType, setCampaignType] = useState("");
+  const [platform, setPlatform] = useState("");
+  const [service, setService] = useState("");
+  const [link, setLink] = useState("");
+  const [quantity, setQuantity] = useState("");
+  const [budget, setBudget] = useState("");
+  const [message, setMessage] = useState("");
+
+  const isQuantity = quantityServices.includes(service);
+
+  const calculatedPrice = isQuantity
+    ? Math.max(Number(quantity || 0) * 10, 0)
+    : Math.max(Number(budget || 0), 0);
+
+  const go = (next: Screen) => {
+    setMessage("");
+    setScreen(next);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const resetCampaign = () => {
+    setCampaignType("");
+    setPlatform("");
+    setService("");
+    setLink("");
+    setQuantity("");
+    setBudget("");
+  };
+
+  const submitCampaign = () => {
+    if (!campaignType || !service || !link) {
+      setMessage("Please complete the required campaign information.");
+      return;
+    }
+
+    if (campaignType === "Social Media Promotion" && !platform) {
+      setMessage("Please select a platform.");
+      return;
+    }
+
+    if (isQuantity && Number(quantity) <= 0) {
+      setMessage("Please enter the quantity you need.");
+      return;
+    }
+
+    if (!isQuantity && Number(budget) <= 0) {
+      setMessage("Please enter your campaign budget.");
+      return;
+    }
+
+    if (calculatedPrice < 2500) {
+      setMessage(
+        "Minimum campaign value is ₦2,500. Please increase your campaign value to continue."
+      );
+      return;
+    }
+
+    go("review");
+  };
+
+  const nav = [
+    ["dashboard", "Home"],
+    ["campaigns", "Campaigns"],
+    ["create", "Create Campaign"],
+    ["wallet", "Wallet"],
+    ["results", "Results"],
+    ["transactions", "Transactions"],
+    ["rewards", "Rewards"],
+    ["invite", "Invite & Earn"],
+    ["support", "Support"],
+    ["profile", "Profile"],
+  ] as const;
+
   return (
-    <main className="site">
-      <style jsx global>{`
-        * {
-          box-sizing: border-box;
-        }
-
-        html {
-          scroll-behavior: smooth;
-        }
-
-        body {
-          margin: 0;
-          background: #f8f8fc;
-          color: #17172f;
-          font-family:
-            Inter,
-            ui-sans-serif,
-            system-ui,
-            -apple-system,
-            BlinkMacSystemFont,
-            "Segoe UI",
-            sans-serif;
-        }
-
-        a {
-          color: inherit;
-          text-decoration: none;
-        }
-
-        button {
-          font: inherit;
-          cursor: pointer;
-        }
-
-        .site {
-          min-height: 100vh;
-          background: #f8f8fc;
-        }
-
-        .header {
-          position: sticky;
-          top: 0;
-          z-index: 50;
-          background: rgba(255, 255, 255, 0.96);
-          backdrop-filter: blur(14px);
-          border-bottom: 1px solid #e8e8f1;
-        }
-
-        .header-inner {
-          max-width: 1180px;
-          height: 74px;
-          margin: auto;
-          padding: 0 22px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 20px;
-        }
-
-        .brand {
-          font-size: 22px;
-          font-weight: 900;
-          letter-spacing: -0.8px;
-        }
-
-        .brand span {
-          color: #6657e8;
-        }
-
-        .desktop-nav {
-          display: flex;
-          align-items: center;
-          gap: 25px;
-          color: #62627a;
-          font-size: 14px;
-          font-weight: 650;
-        }
-
-        .desktop-nav button {
-          border: 0;
-          background: transparent;
-          color: inherit;
-        }
-
-        .desktop-nav button:hover {
-          color: #6657e8;
-        }
-
-        .header-actions {
-          display: flex;
-          align-items: center;
-          gap: 14px;
-        }
-
-        .sign-in {
-          font-size: 14px;
-          font-weight: 750;
-          color: #6657e8;
-        }
-
-        .button {
-          border: 0;
-          border-radius: 11px;
-          padding: 13px 19px;
-          font-weight: 800;
-          transition:
-            transform 0.15s ease,
-            box-shadow 0.15s ease;
-        }
-
-        .button:hover {
-          transform: translateY(-1px);
-        }
-
-        .primary {
-          background: #6657e8;
-          color: white;
-          box-shadow: 0 8px 20px rgba(102, 87, 232, 0.18);
-        }
-
-        .secondary {
-          background: white;
-          color: #6657e8;
-          border: 1px solid #dcd9fa;
-        }
-
-        .container {
-          max-width: 1180px;
-          margin: auto;
-          padding: 0 22px;
-        }
-
-        .hero {
-          padding: 86px 0 70px;
-          text-align: center;
-        }
-
-        .eyebrow {
-          display: inline-block;
-          padding: 7px 11px;
-          border-radius: 999px;
-          background: #eeecff;
-          color: #6657e8;
-          font-size: 11px;
-          font-weight: 900;
-          letter-spacing: 0.7px;
-          margin-bottom: 18px;
-        }
-
-        .hero h1 {
-          max-width: 820px;
-          margin: auto;
-          font-size: clamp(42px, 7vw, 72px);
-          line-height: 0.99;
-          letter-spacing: -3.5px;
-        }
-
-        .hero h1 span {
-          color: #6657e8;
-        }
-
-        .hero p {
-          max-width: 690px;
-          margin: 22px auto 28px;
-          color: #66677e;
-          line-height: 1.7;
-          font-size: 17px;
-        }
-
-        .hero-actions {
-          display: flex;
-          justify-content: center;
-          gap: 12px;
-          flex-wrap: wrap;
-        }
-
-        .trust-line {
-          margin-top: 18px;
-          color: #56586e;
-          font-size: 13px;
-          font-weight: 750;
-        }
-
-        .dashboard-card {
-          max-width: 1040px;
-          margin: 0 auto;
-          background: white;
-          border: 1px solid #e5e5ef;
-          border-radius: 24px;
-          padding: 24px;
-          box-shadow: 0 22px 60px rgba(32, 29, 72, 0.08);
-          text-align: left;
-        }
-
-        .demo-label {
-          display: inline-block;
-          background: #fff3c9;
-          color: #856500;
-          padding: 5px 9px;
-          border-radius: 999px;
-          font-size: 10px;
-          font-weight: 900;
-          margin-bottom: 15px;
-        }
-
-        .dashboard-top {
-          display: flex;
-          justify-content: space-between;
-          gap: 15px;
-          align-items: center;
-          margin-bottom: 22px;
-        }
-
-        .dashboard-title {
-          font-weight: 850;
-          font-size: 18px;
-        }
-
-        .dashboard-title small {
-          display: block;
-          color: #88899c;
-          font-size: 12px;
-          font-weight: 500;
-          margin-top: 4px;
-        }
-
-        .chart {
-          height: 170px;
-          border: 1px solid #ededf4;
-          border-radius: 16px;
-          background:
-            linear-gradient(#f1f0f8 1px, transparent 1px),
-            linear-gradient(90deg, #f1f0f8 1px, transparent 1px);
-          background-size: 25% 50px;
-          padding: 25px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #aaaabd;
-          font-size: 13px;
-        }
-
-        .days {
-          display: flex;
-          justify-content: space-between;
-          color: #8a8b9d;
-          font-size: 11px;
-          margin-top: 8px;
-        }
-
-        .demo-stats {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 14px;
-          margin-top: 18px;
-        }
-
-        .demo-stat {
-          border: 1px solid #e9e9f1;
-          border-radius: 15px;
-          padding: 18px;
-        }
-
-        .demo-stat-label {
-          color: #85869a;
-          font-size: 12px;
-          font-weight: 650;
-        }
-
-        .demo-stat-value {
-          font-size: 25px;
-          font-weight: 900;
-          margin-top: 6px;
-        }
-
-        section {
-          scroll-margin-top: 90px;
-        }
-
-        .section {
-          padding: 82px 0;
-        }
-
-        .section-heading {
-          max-width: 700px;
-          margin: 0 auto 40px;
-          text-align: center;
-        }
-
-        .section-heading h2 {
-          font-size: clamp(30px, 5vw, 44px);
-          letter-spacing: -1.5px;
-          margin: 0 0 12px;
-        }
-
-        .section-heading p {
-          color: #707188;
-          line-height: 1.65;
-          margin: 0;
-        }
-
-        .feature-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 16px;
-        }
-
-        .feature {
-          background: white;
-          border: 1px solid #e7e7f0;
-          border-radius: 18px;
-          padding: 24px;
-        }
-
-        .feature-icon {
-          width: 40px;
-          height: 40px;
-          border-radius: 12px;
-          background: #efedff;
-          color: #6657e8;
-          display: grid;
-          place-items: center;
-          font-weight: 900;
-          margin-bottom: 16px;
-        }
-
-        .feature h3 {
-          margin: 0 0 8px;
-          font-size: 17px;
-        }
-
-        .feature p {
-          margin: 0;
-          color: #707188;
-          line-height: 1.6;
-          font-size: 14px;
-        }
-
-        .category-grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 14px;
-        }
-
-        .category {
-          background: white;
-          border: 1px solid #e7e7f0;
-          border-radius: 17px;
-          padding: 21px;
-          font-weight: 800;
-        }
-
-        .category:hover {
-          border-color: #cfcafa;
-          box-shadow: 0 10px 25px rgba(102, 87, 232, 0.07);
-        }
-
-        .category small {
-          display: block;
-          color: #77788d;
-          font-size: 12px;
-          font-weight: 500;
-          line-height: 1.5;
-          margin-top: 7px;
-        }
-
-        .steps {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 15px;
-        }
-
-        .step {
-          background: white;
-          border: 1px solid #e7e7f0;
-          border-radius: 18px;
-          padding: 23px;
-        }
-
-        .step-number {
-          color: #6657e8;
-          font-size: 26px;
-          font-weight: 900;
-        }
-
-        .step h3 {
-          margin: 12px 0 7px;
-          font-size: 16px;
-        }
-
-        .step p {
-          color: #74758a;
-          line-height: 1.55;
-          font-size: 13px;
-          margin: 0;
-        }
-
-        .pricing-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 17px;
-          align-items: stretch;
-        }
-
-        .pricing-card {
-          background: white;
-          border: 1px solid #e5e5ee;
-          border-radius: 20px;
-          padding: 26px;
-          position: relative;
-        }
-
-        .pricing-card.popular {
-          border: 2px solid #6657e8;
-          box-shadow: 0 15px 40px rgba(102, 87, 232, 0.11);
-        }
-
-        .popular-label {
-          position: absolute;
-          top: -12px;
-          right: 20px;
-          background: #6657e8;
-          color: white;
-          padding: 5px 10px;
-          border-radius: 999px;
-          font-size: 10px;
-          font-weight: 900;
-        }
-
-        .pricing-card h3 {
-          margin: 0 0 10px;
-        }
-
-        .price {
-          font-size: 36px;
-          font-weight: 900;
-          letter-spacing: -1px;
-        }
-
-        .price span {
-          color: #77788d;
-          font-size: 13px;
-          font-weight: 600;
-        }
-
-        .pricing-card p {
-          color: #77788d;
-          font-size: 13px;
-          line-height: 1.5;
-        }
-
-        .pricing-card ul {
-          list-style: none;
-          padding: 0;
-          margin: 22px 0;
-          display: grid;
-          gap: 11px;
-          color: #55566d;
-          font-size: 13px;
-        }
-
-        .pricing-card li::before {
-          content: "✓";
-          color: #6657e8;
-          font-weight: 900;
-          margin-right: 8px;
-        }
-
-        .faq {
-          max-width: 850px;
-          margin: auto;
-          display: grid;
-          gap: 10px;
-        }
-
-        .faq-item {
-          background: white;
-          border: 1px solid #e6e6ef;
-          border-radius: 14px;
-          overflow: hidden;
-        }
-
-        .faq-question {
-          width: 100%;
-          background: white;
-          border: 0;
-          padding: 18px;
-          text-align: left;
-          display: flex;
-          justify-content: space-between;
-          gap: 20px;
-          font-weight: 800;
-          color: #252540;
-        }
-
-        .faq-answer {
-          padding: 0 18px 18px;
-          color: #74758a;
-          line-height: 1.65;
-          font-size: 14px;
-        }
-
-        .cta {
-          margin: 20px auto 80px;
-          max-width: 1040px;
-          background: #6657e8;
-          color: white;
-          border-radius: 25px;
-          padding: 58px 25px;
-          text-align: center;
-        }
-
-        .cta h2 {
-          margin: 0;
-          font-size: clamp(30px, 5vw, 46px);
-          letter-spacing: -1.5px;
-        }
-
-        .cta p {
-          max-width: 620px;
-          margin: 14px auto 25px;
-          color: #e8e6ff;
-          line-height: 1.65;
-        }
-
-        .cta .button {
-          background: white;
-          color: #6657e8;
-        }
-
-        .footer {
-          background: white;
-          border-top: 1px solid #e6e6ef;
-          padding: 50px 0 25px;
-        }
-
-        .footer-grid {
-          display: grid;
-          grid-template-columns: 1.5fr 1fr 1fr;
-          gap: 35px;
-        }
-
-        .footer h4 {
-          margin: 0 0 13px;
-          font-size: 14px;
-        }
-
-        .footer a,
-        .footer button {
-          display: block;
-          border: 0;
-          background: transparent;
-          padding: 5px 0;
-          color: #74758a;
-          font-size: 13px;
-          text-align: left;
-        }
-
-        .footer-description {
-          color: #74758a;
-          line-height: 1.6;
-          max-width: 360px;
-          font-size: 13px;
-        }
-
-        .copyright {
-          border-top: 1px solid #ededf3;
-          margin-top: 35px;
-          padding-top: 20px;
-          color: #85869a;
-          font-size: 12px;
-          text-align: center;
-        }
-
-        @media (max-width: 900px) {
-          .desktop-nav {
-            display: none;
-          }
-
-          .feature-grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
-
-          .category-grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
-
-          .steps {
-            grid-template-columns: repeat(2, 1fr);
-          }
-
-          .pricing-grid {
-            grid-template-columns: 1fr;
-            max-width: 500px;
-            margin: auto;
-          }
-        }
-
-        @media (max-width: 600px) {
-          .header-inner {
-            padding: 0 15px;
-          }
-
-          .header-actions .sign-in {
-            display: none;
-          }
-
-          .hero {
-            padding: 58px 0 45px;
-          }
-
-          .hero h1 {
-            letter-spacing: -2px;
-          }
-
-          .hero p {
-            font-size: 15px;
-          }
-
-          .dashboard-card {
-            padding: 15px;
-            border-radius: 19px;
-          }
-
-          .demo-stats {
-            grid-template-columns: 1fr;
-          }
-
-          .feature-grid,
-          .category-grid,
-          .steps,
-          .footer-grid {
-            grid-template-columns: 1fr;
-          }
-
-          .section {
-            padding: 60px 0;
-          }
-
-          .container {
-            padding: 0 15px;
-          }
+    <main className="app">
+      <style>{`
+        *{box-sizing:border-box}
+        body{margin:0;font-family:Inter,Arial,sans-serif;background:#f7f8fc;color:#171827}
+        button,input,select,textarea{font:inherit}
+        button{cursor:pointer}
+        .app{min-height:100vh}
+        .top{height:70px;background:#fff;border-bottom:1px solid #ececf3;display:flex;align-items:center;justify-content:space-between;padding:0 6%;position:sticky;top:0;z-index:10}
+        .logo{font-weight:900;letter-spacing:-.5px;font-size:22px;color:#171827}
+        .logo span{color:#5b4df5}
+        .topnav{display:flex;gap:10px;align-items:center}
+        .linkbtn{background:none;border:0;color:#55576a;padding:10px}
+        .primary{background:#5b4df5;color:#fff;border:0;border-radius:10px;padding:12px 18px;font-weight:700}
+        .secondary{background:#fff;color:#4e45d8;border:1px solid #dddafa;border-radius:10px;padding:12px 18px;font-weight:700}
+        .hero{padding:90px 6% 70px;text-align:center;background:linear-gradient(180deg,#fff 0%,#f7f8fc 100%)}
+        .badge{display:inline-block;background:#efedff;color:#5548d8;padding:8px 13px;border-radius:999px;font-size:13px;font-weight:700}
+        h1{font-size:clamp(40px,7vw,72px);line-height:1.02;letter-spacing:-3px;margin:22px auto 18px;max-width:850px}
+        .hero p{font-size:18px;color:#686a79;max-width:650px;margin:0 auto 28px;line-height:1.6}
+        .actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+        .trust{margin-top:24px;font-weight:700;color:#454652}
+        .section{padding:70px 6%;max-width:1200px;margin:auto}
+        .section h2{font-size:34px;margin:0 0 12px}
+        .muted{color:#727483;line-height:1.6}
+        .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:28px}
+        .card{background:#fff;border:1px solid #e9e9f0;border-radius:18px;padding:22px;box-shadow:0 5px 25px rgba(25,25,60,.04)}
+        .card h3{margin:0 0 8px}
+        .icon{width:42px;height:42px;border-radius:12px;background:#efedff;color:#5b4df5;display:flex;align-items:center;justify-content:center;font-weight:900;margin-bottom:18px}
+        .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+        .stepnum{font-size:13px;color:#5b4df5;font-weight:900}
+        .pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+        .price{font-size:30px;font-weight:900;margin:14px 0}
+        .faq{border-bottom:1px solid #e6e6ed;padding:20px 0}
+        .footer{background:#171827;color:#fff;padding:50px 6%;margin-top:30px}
+        .footer p{color:#b9bac7;max-width:550px;line-height:1.6}
+        .dashboard{display:flex;min-height:calc(100vh - 70px)}
+        .side{width:240px;background:#fff;border-right:1px solid #e8e8ef;padding:24px 14px}
+        .side button{display:block;width:100%;text-align:left;border:0;background:none;padding:12px 14px;border-radius:10px;color:#55576a;margin:3px 0}
+        .side button.active,.side button:hover{background:#efedff;color:#5144d8;font-weight:700}
+        .content{flex:1;padding:35px;max-width:1300px}
+        .welcome{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:25px}
+        .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+        .stat strong{display:block;font-size:25px;margin-top:8px}
+        .label{font-size:13px;color:#777989}
+        .empty{text-align:center;padding:55px 20px}
+        .formbox{max-width:760px;margin:auto;background:#fff;border:1px solid #e6e6ef;border-radius:18px;padding:25px}
+        label{display:block;font-weight:700;font-size:14px;margin:18px 0 8px}
+        input,select,textarea{width:100%;padding:13px 14px;border:1px solid #dfe0e8;border-radius:10px;background:#fff;outline:none}
+        input:focus,select:focus,textarea:focus{border-color:#6559e9;box-shadow:0 0 0 3px #efedff}
+        .notice{background:#fff5df;border:1px solid #f0d99a;color:#735900;padding:13px;border-radius:10px;margin:15px 0}
+        .error{background:#fff0f0;border:1px solid #f0caca;color:#9b3030;padding:13px;border-radius:10px;margin:15px 0}
+        .reviewrow{display:flex;justify-content:space-between;gap:20px;padding:14px 0;border-bottom:1px solid #eee}
+        .reviewrow span:first-child{color:#777989}
+        .total{font-size:25px;font-weight:900}
+        .auth{min-height:calc(100vh - 70px);display:flex;align-items:center;justify-content:center;padding:30px}
+        .authbox{width:100%;max-width:430px;background:#fff;border:1px solid #e6e6ef;border-radius:18px;padding:30px}
+        @media(max-width:900px){
+          .grid,.steps{grid-template-columns:repeat(2,1fr)}
+          .pricing{grid-template-columns:1fr}
+          .stats{grid-template-columns:repeat(2,1fr)}
+          .side{width:205px}
+        }
+        @media(max-width:650px){
+          .top{padding:0 18px}.topnav .linkbtn{display:none}
+          .hero{padding:65px 18px 50px}h1{letter-spacing:-2px}
+          .section{padding:50px 18px}
+          .grid,.steps{grid-template-columns:1fr}
+          .dashboard{display:block}
+          .side{width:100%;border-right:0;border-bottom:1px solid #eee;display:flex;overflow:auto;padding:8px}
+          .side button{min-width:max-content;width:auto}
+          .content{padding:20px 16px}
+          .welcome{display:block}
+          .stats{grid-template-columns:1fr 1fr}
         }
       `}</style>
 
-      <header className="header">
-        <div className="header-inner">
-          <Link href="/" className="brand">
-            PROM<span>VANTA</span>
-          </Link>
+      <header className="top">
+        <button className="logo" onClick={() => go("home")}>
+          PROM<span>VANTA</span>
+        </button>
 
-          <nav className="desktop-nav">
-            <button onClick={() => scrollTo("how-it-works")}>
-              How It Works
-            </button>
-
-            <button onClick={() => scrollTo("campaigns")}>
-              Campaigns
-            </button>
-
-            <button onClick={() => scrollTo("pricing")}>Pricing</button>
-
-            <button onClick={() => scrollTo("faq")}>FAQ</button>
-          </nav>
-
-          <div className="header-actions">
-            <Link href="/login" className="sign-in">
-              Sign In
-            </Link>
-
-            <Link href="/signup">
-              <button className="button primary">Create Account</button>
-            </Link>
-          </div>
+        <div className="topnav">
+          <button className="linkbtn" onClick={() => go("home")}>
+            Home
+          </button>
+          <button className="linkbtn" onClick={() => go("campaigns")}>
+            Campaigns
+          </button>
+          <button className="linkbtn" onClick={() => go("support")}>
+            Support
+          </button>
+          <button className="secondary" onClick={() => go("login")}>
+            Sign in
+          </button>
+          <button className="primary" onClick={() => go("create")}>
+            Create Campaign
+          </button>
         </div>
       </header>
 
-      <section className="hero">
-        <div className="container">
-          <div className="eyebrow">
-            LEGITIMATE DIGITAL PROMOTION
-          </div>
-
-          <h1>
-            Promote smarter.
-            <br />
-            <span>Reach further.</span>
-          </h1>
-
-          <p>
-            Launch legitimate digital promotion campaigns, manage your
-            budget and track real campaign results from one simple platform.
-          </p>
-
-          <div className="hero-actions">
-            <Link href="/create-campaign">
-              <button className="button primary">
+      {screen === "home" && (
+        <>
+          <section className="hero">
+            <span className="badge">Legitimate promotion, real tracking</span>
+            <h1>Promote smarter. Reach further.</h1>
+            <p>
+              Launch legitimate digital promotion campaigns, manage your
+              budget and track real campaign results from one simple platform.
+            </p>
+            <div className="actions">
+              <button className="primary" onClick={() => go("create")}>
                 Create a Campaign
               </button>
-            </Link>
-
-            <button
-              className="button secondary"
-              onClick={() => scrollTo("how-it-works")}
-            >
-              See How It Works
-            </button>
-          </div>
-
-          <div className="trust-line">
-            No fake engagement. No bots. Real campaigns only.
-          </div>
-        </div>
-      </section>
-
-      <section className="container">
-        <div className="dashboard-card">
-          <span className="demo-label">DEMO DATA</span>
-
-          <div className="dashboard-top">
-            <div className="dashboard-title">
-              Campaign performance
-              <small>Example customer dashboard</small>
+              <button className="secondary" onClick={() => go("dashboard")}>
+                See How It Works
+              </button>
             </div>
-          </div>
-
-          <div className="chart">
-            Example performance chart — real customer data appears only after
-            provider reporting is available.
-          </div>
-
-          <div className="days">
-            <span>Tue</span>
-            <span>Wed</span>
-            <span>Thu</span>
-            <span>Fri</span>
-            <span>Sat</span>
-            <span>Sun</span>
-          </div>
-
-          <div className="demo-stats">
-            <div className="demo-stat">
-              <div className="demo-stat-label">Wallet</div>
-              <div className="demo-stat-value">₦48,500</div>
+            <div className="trust">
+              No fake engagement. No bots. Real campaigns only.
             </div>
+          </section>
 
-            <div className="demo-stat">
-              <div className="demo-stat-label">Active</div>
-              <div className="demo-stat-value">3</div>
+          <section className="section">
+            <h2>Campaign performance</h2>
+            <p className="muted">DEMO DATA — example dashboard preview</p>
+
+            <div className="grid">
+              <div className="card">
+                <span className="label">Wallet</span>
+                <strong>₦48,500</strong>
+              </div>
+              <div className="card">
+                <span className="label">Active</span>
+                <strong>3</strong>
+              </div>
+              <div className="card">
+                <span className="label">Reach</span>
+                <strong>12.4k</strong>
+              </div>
+              <div className="card">
+                <span className="label">Campaigns</span>
+                <strong>8</strong>
+              </div>
             </div>
+          </section>
 
-            <div className="demo-stat">
-              <div className="demo-stat-label">Reach</div>
-              <div className="demo-stat-value">12.4k</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="section" id="trust">
-        <div className="container">
-          <div className="section-heading">
+          <section className="section">
             <h2>Built on trust and transparency</h2>
-            <p>
-              Everything you need to run legitimate campaigns with
-              confidence.
-            </p>
-          </div>
+            <div className="grid">
+              {[
+                ["✓", "Transparent pricing"],
+                ["✓", "Secure payments"],
+                ["✓", "Real campaign tracking"],
+                ["✓", "Legitimate services"],
+                ["✓", "Customer support"],
+                ["✓", "No fake engagement"],
+              ].map(([icon, title]) => (
+                <div className="card" key={title}>
+                  <div className="icon">{icon}</div>
+                  <h3>{title}</h3>
+                  <p className="muted">
+                    Designed to keep promotion clear, legitimate and
+                    trustworthy.
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
 
-          <div className="feature-grid">
+          <section className="section">
+            <h2>Campaign categories</h2>
+            <div className="grid">
+              {campaignTypes.map((x) => (
+                <div className="card" key={x}>
+                  <div className="icon">↗</div>
+                  <h3>{x}</h3>
+                  <p className="muted">
+                    Choose a relevant goal and let PROMVANTA calculate the
+                    applicable campaign price.
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="section">
+            <h2>How PROMVANTA works</h2>
+            <div className="steps">
+              {[
+                ["01", "Create your campaign", "Pick a category and add your promotion URL."],
+                ["02", "Choose your goal", "Tell us what you want to achieve."],
+                ["03", "Pay securely", "Review the final amount before payment."],
+                ["04", "Track your campaign", "Watch real results come in from connected providers."],
+              ].map(([n, t, d]) => (
+                <div className="card" key={n}>
+                  <div className="stepnum">{n}</div>
+                  <h3>{t}</h3>
+                  <p className="muted">{d}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="section">
+            <h2>Simple, transparent pricing</h2>
+            <p className="muted">
+              Example pricing only — final fees are configurable by
+              administrators.
+            </p>
+            <div className="pricing">
+              {[
+                ["Starter", "₦0", "10% per campaign"],
+                ["Growth", "10%", "Reduced campaign rate"],
+                ["Business", "Custom", "Tailored pricing"],
+              ].map(([name, price, detail]) => (
+                <div className="card" key={name}>
+                  <h3>{name}</h3>
+                  <div className="price">{price}</div>
+                  <p className="muted">{detail}</p>
+                  <button className="primary" onClick={() => go("create")}>
+                    Get Started
+                  </button>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="section">
+            <h2>Frequently asked questions</h2>
             {[
-              [
-                "₦",
-                "Transparent pricing",
-                "Clear campaign pricing and applicable charges are shown before you pay.",
-              ],
-              [
-                "✓",
-                "Secure payments",
-                "Payments are designed to use verified server-side processing.",
-              ],
-              [
-                "↗",
-                "Real campaign tracking",
-  
+              "Is PROMVANTA a legitimate platform?",
+              "Where do campaign results come from?",
+              "How are campaigns reviewed?",
+              "How does pricing work?",
+              "Can I get a refund?",
+              "Which payment methods are supported?",
+            ].map((q) => (
+              <div className="faq" key={q}>
+                <strong>{q}</strong>
+                <p className="muted">
+                  PROMVANTA is designed around legitimate provider-backed
+                  promotion, transparent pricing and real campaign tracking.
+                </p>
+              </div>
+            ))}
+          </section>
+
+          <section className="hero">
+            <h2>Ready to launch your first campaign?</h2>
+            <p>Promote smarter. Reach further.</p>
+            <button className="primary" onClick={() => go("create")}>
+              Create a Campaign
+            </button>
+          </section>
+
+          <footer className="footer">
+            <h2>PROMVANTA</h2>
+            <p>
+              Create, manage and track legitimate digital promotion campaigns
+              from one powerful platform.
+            </p>
+            <p>Promote smarter. Reach further.</p>
+            <p>
+              © 2026 PROMVANTA. All rights reserved.
+              <br />
+              No fake engagement. No bots. Real campaigns only.
+            </p>
+          </footer>
+        </>
+      )}
+
+      {screen !== "home" && !["login", "signup"].includes(screen) && (
+        <div className="dashboard">
+          <aside className="side">
+            {nav.map(([id, label]) => (
+              <button
+                key={id}
+                className={screen === id ? "active" : ""}
+                onClick={() => go(id)}
+              >
+                {label}
+              </button>
+            ))}
+          </aside>
+
+          <section className="content">
+            {screen === "dashboard" && (
+              <>
+                <div className="welcome">
+                  <div>
+                    <h2>Welcome back 👋</h2>
+                    <p className="muted">
+                      Manage your campaigns and track real results.
+                    </p>
+                  </div>
+                  <button className="primary" onClick={() => go("create")}>
+                    Create Campaign
+                  </button>
+                </div>
+
+                <div className="stats">
+                  {[
+                    ["Wallet Balance", "₦0.00"],
+                    ["Active Campaigns", "0"],
+                    ["Total Spend", "₦0.00"],
+                    ["Completed Campaigns", "0"],
+                  ].map(([a, b]) => (
+                    <div className="card stat" key={a}>
+                      <span className="label">{a}</span>
+                      <strong>{b}</strong>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="card" style={{ marginTop: 18 }}>
+                  <h3>Campaign performance</h3>
+                  <div className="empty">
+                    <h3>No campaign data yet</h3>
+                    <p className="muted">
+                      Your real provider results will appear here after a
+                      campaign is active.
+                    </p>
+                    <button className="primary" onClick={() => go("create")}>
+                      Create your first campaign
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {screen === "campaigns" && (
+              <Page title="Campaigns">
+                <div className="card empty">
+                  <h3>No campaigns yet</h3>
+                  <p className="muted">
+                    Your campaigns will appear here after you create one.
+                  </p>
+                  <button className="primary" onClick={() => go("create")}>
+                    Create Campaign
+                  </button>
+                </div>
+              </Page>
+            )}
+
+            {screen === "create" && (
+              <Page title="Create Campaign">
+                <div className="formbox">
+                  <p className="muted">
+                    Tell PROMVANTA what you want to promote and what you want
+                    to achieve.
+                  </p>
+
+                  <label>Campaign Type</label>
+                  <select
+                    value={campaignType}
+                    onChange={(e) => {
+                      setCampaignType(e.target.value);
+                      setPlatform("");
+                      setService("");
+                    }}
+                  >
+                    <option value="">Select campaign type</option>
+                    {campaignTypes.map((x) => (
+                      <option key={x}>{x}</option>
+                    ))}
+                  </select>
+
+                  {campaignType &&
+            
